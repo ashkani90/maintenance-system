@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گزارش خرابی تجهیزات - سیستم نگهداری و تعمیرات</title>
+    <!-- استایل‌های اصلی -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- استایل‌های سایدبار -->
+    <link rel="stylesheet" href="../sidebar/sidebar.css">
+    <!-- آیکون ها -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- کتابخانه آنلاین 
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">-->
+
+    <!-- استفاده از کتابخانه محلی-->
+    <link rel="stylesheet" href="../libs/font-awesome-Pro.6.7.2/web/css/all.min.css">
+    <link rel="stylesheet" href="../css/vazirmatn.css">   
+    
+    <!-- اضافه کردن کتابخانه‌های مورد نیاز برای انتخاب تجهیز -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>  
+ 
+    
+    <!-- معرفی دو کتابخانه Flatpickr و Select2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+
+
+
+
+
+
+
+
+    <style>
+
+        /* شروع استایل مربوز به قسمت انتخاب تجهیز خراب */
+        .equipment-card {
+            border: 2px solid var(--form-border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .equipment-card:hover {
+            border-color: var(--form-secondary);
+            background-color: #f8fafc;
+            transform: translateX(-5px);
+        }
+
+        .equipment-card.selected {
+            border: 2px solid #1faf14;
+            background-color: #f0fff4;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .priority-low { background-color: #d4edda; color: #155724; }
+        .priority-medium { background-color: #fff3cd; color: #856404; }
+        .priority-high { background-color: #f8d7da; color: #721c24; }
+        .priority-critical { background-color: #721c24; color: white; }
+
+        .impact-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .impact-low { background-color: #d4edda; color: #155724; }
+        .impact-medium { background-color: #fff3cd; color: #856404; }
+        .impact-high { background-color: #f8d7da; color: #721c24; }
+
+        .detail-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--form-primary);
+            font-weight: 600;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #3498db;
+            color: #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background-color: #3498db !important;
+            color: white !important;
+            border-color: #2980b9;
+        }
+
+        /* پایان استایل مربوز به قسمت انتخاب تجهیز خراب */
+
+        /* استایل‌های اضافی برای فرم گزارش خرابی */
+        .input-group {
+            position: relative;
+            display: flex;
+        }
+        
+        .input-group .form-control {
+            flex: 1;
+        }
+        
+        .input-group button {
+            margin-right: 5px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0 10px;
+            cursor: pointer;
+        }
+        
+        .input-group button:hover {
+            background: #e9ecef;
+        }
+        
+        .btn-equipment-details {
+            margin-top: 5px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-equipment-details:hover {
+            background: #2980b9;
+        }
+        
+        .equipment-details-card {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 15px;
+            padding: 15px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .equipment-details-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .equipment-details-card .card-header h4 {
+            margin: 0;
+            color: #2c3e50;
+
+
+        }
+        
+        .btn-close {
+            background: none;
+            border: none;
+            color: #95a5a6;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .btn-close:hover {
+            color: #e74c3c;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+     /*   .detail-label {
+            font-weight: bold;
+            color: #2c3e50;
+            width: 40%;
+        }
+        
+        .detail-value {
+            color: #34495e;
+            width: 60%;
+        }*/
+        
+        .char-counter {
+            text-align: left;
+            font-size: 0.85rem;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
+        
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 8px;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+        
+        .file-upload-area:hover {
+            background-color: #f0f8ff;
+            border-color: #2980b9;
+        }
+        
+        .file-upload-area i {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .file-upload-area p {
+            margin: 10px 0;
+            color: #2c3e50;
+        }
+        
+        .file-upload-area small {
+            color: #95a5a6;
+        }
+        
+        .upload-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .preview-item {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 200px;
+        }
+        
+        .preview-item img {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .preview-item .file-info {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .preview-item .file-info span {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+        
+        .preview-item .file-info small {
+            color: #95a5a6;
+            font-size: 0.8rem;
+        }
+        
+        .preview-item .remove-file {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .preview-item .remove-file:hover {
+            color: #c0392b;
+        }
+        
+        .required {
+            color: #e74c3c;
+            margin-right: 3px;
+        }
+        
+        .form-control.error {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* استایل‌های رسپانسیو */
+        @media (max-width: 768px) {
+            .radio-group, .checkbox-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .file-upload-area {
+                padding: 20px;
+            }
+            
+            .preview-item {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .equipment-details-card {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                max-width: 400px;
+                z-index: 1000;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            }
+        }
+
+                .form-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+
+</head>
+<body>
+
+    <!-- تعریف آدرس مسیر صفحه -->
+    <body data-page-title="گزارش خرابی" data-breadcrumb="فرم ها|../forms/failure-report.html,اعلان‌ها">  
+
+    <!-- بارگذاری سایدبار -->
+    <div id="sidebar-container"></div>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+
+            <!-- محتوای فرم -->
+            <div class="form-container">
+                <div class="form-header">
+                    <h1 class="form-title"><i class="fas fa-exclamation-triangle"></i> گزارش خرابی تجهیزات</h1>
+                    <p>از این فرم برای ثبت دقیق خرابی تجهیزات، تحلیل ریشه‌ای علل و اقدامات اصلاحی استفاده کنید.</p>
+                </div>
+                
+                <form id="failureReportForm" class="form-body">
+                    <!-- بخش اطلاعات گزارش -->
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-file-alt"></i> اطلاعات گزارش</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reportNumber">شماره گزارش <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" id="reportNumber" class="form-control" value="FR-2023-001" readonly>
+                                    <button type="button" class="btn-copy" title="کپی شماره گزارش">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="reportDate">تاریخ و زمان گزارش <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <input type="datetime-local" id="reportDate" class="form-control" required>
+                                    <button type="button" class="btn-now" title="ثبت زمان فعلی">
+                                        <i class="fas fa-clock"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="failureSeverity">شدت خرابی <span class="required">*</span></label>
+                                <select id="failureSeverity" class="form-control" required>
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="minor">جزئی (بدون توقف تولید)</option>
+                                    <option value="moderate">متوسط (توقف کوتاه مدت)</option>
+                                    <option value="major">اساسی (توقف طولانی)</option>
+                                    <option value="critical">بحرانی (خطر ایمنی یا زیان مالی بالا)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reportedBy">گزارش‌دهنده <span class="required">*</span></label>
+                                <input type="text" id="reportedBy" class="form-control" placeholder="نام و نام خانوادگی" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="reporterDepartment">دپارتمان گزارش‌دهنده <span class="required">*</span></label>
+                                <select id="reporterDepartment" class="form-control" required>
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="production">تولید</option>
+                                    <option value="quality">کنترل کیفی</option>
+                                    <option value="maintenance">تعمیرات و نگهداری</option>
+                                    <option value="facilities">تاسیسات</option>
+                                    <option value="packaging">بسته‌بندی</option>
+                                    <option value="warehouse">انبار</option>
+                                    <option value="rnd">تحقیق و توسعه</option>
+                                    <option value="office">اداری</option>
+                                    <option value="IT">فناوری اطلاعات</option>
+                                    <option value="security">انتظامات</option>
+                                    <option value="safety">ایمنی</option>
+                                    <option value="other">سایر</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="reporterContact">راه ارتباطی</label>
+                                <input type="text" id="reporterContact" class="form-control" placeholder="شماره داخلی یا موبایل">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بخش اطلاعات تجهیز خراب -->
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-industry"></i> اطلاعات تجهیز خراب</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group" style="width: 100%;">
+                                <div class="form-section" style="padding: 0; box-shadow: none;">                   
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <span class="required">*</span> جستجو و انتخاب تجهیز
+                                        </label>
+                                        <select id="equipmentSelect" class="form-control" style="width: 100%;">
+                                            <option value="">جستجوی تجهیز...</option>
+                                        </select>
+                                        <span class="form-text">نام تجهیز، کد یا محل را تایپ کنید</span>
+                                    </div>
+                                    
+                                    <!-- کارت نمایش تجهیز انتخاب شده (مخفی در ابتدا) -->
+                                    <div id="selectedEquipmentCard" class="equipment-card" style="display: none; margin-top: 20px;">
+                                        <!-- محتوا با جاوااسکریپت پر می‌شود -->
+                                    </div>
+                                    
+                                    <div class="form-group" id="manualEquipmentSection" style="display: none;">
+                                        <label class="form-label">یا وارد کردن دستی اطلاعات تجهیز</label>
+                                        <div class="form-grid" style="display: flex; gap: 15px;">
+                                            <div class="form-group" style="flex: 1;">
+                                                <input type="text" id="manualEquipmentName" class="form-control" 
+                                                        placeholder="نام تجهیز">
+                                            </div>
+                                            <div class="form-group" style="flex: 1;">
+                                                <input type="text" id="manualEquipmentLocation" class="form-control" 
+                                                        placeholder="محل استقرار">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="button" id="toggleManualEntry" class="btn btn-outline" style="margin-top: 10px;">
+                                        <i class="fas fa-edit"></i> وارد کردن دستی اطلاعات
+                                    </button>
+                                </div>
+                                
+                            </div>
+                        </div>
+                                               
+                        <!-- ادامه فیلدهای اطلاعات تجهیز (همان فیلدهای موجود) -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="equipmentLocation">محل دقیق خرابی <span class="required">*</span></label>
+                                <input type="text" id="equipmentLocation" class="form-control" placeholder="مثال: خط تولید ۱، ایستگاه ۳، بخش الکتریکال" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="assetTag">شماره پلاک دارایی</label>
+                                <input type="text" id="assetTag" class="form-control" placeholder="شماره ثبت شده روی تجهیز">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="manufacturer">سازنده</label>
+                                <input type="text" id="manufacturer" class="form-control" placeholder="نام شرکت سازنده">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="modelNumber">شماره مدل</label>
+                                <input type="text" id="modelNumber" class="form-control" placeholder="مدل دقیق تجهیز">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="serialNumber">شماره سریال</label>
+                                <input type="text" id="serialNumber" class="form-control" placeholder="شماره سریال منحصر به فرد">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="commissioningDate">تاریخ راه‌اندازی</label>
+                                <input type="date" id="commissioningDate" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بخش جزئیات خرابی -->
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-bug"></i> جزئیات خرابی</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="failureTime">زمان وقوع خرابی <span class="required">*</span></label>
+                                <input type="datetime-local" id="failureTime" class="form-control" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="detectionTime">زمان تشخیص خرابی</label>
+                                <input type="datetime-local" id="detectionTime" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="failureMode">حالت خرابی <span class="required">*</span></label>
+                                <select id="failureMode" class="form-control" required>
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="mechanical">مکانیکی</option>
+                                    <option value="electrical">الکتریکی</option>
+                                    <option value="electronic">الکترونیکی</option>
+                                    <option value="hydraulic">هیدرولیکی</option>
+                                    <option value="pneumatic">پنوماتیکی</option>
+                                    <option value="software">نرم‌افزاری</option>
+                                    <option value="instrumentation">ابزار دقیق</option>
+                                    <option value="structural">ساختاری</option>
+                                    <option value="other">سایر</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="failureDescription">شرح دقیق خرابی <span class="required">*</span></label>
+                            <textarea id="failureDescription" class="form-control" rows="4" placeholder="شرح کامل خرابی، علائم، صداها، بوها، تغییرات عملکردی و ..." required></textarea>
+                            <div class="char-counter">
+                                <span id="descCharCount">0</span> / 1000 کاراکتر
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="operatingConditions">شرایط عملیاتی در زمان خرابی</label>
+                            <textarea id="operatingConditions" class="form-control" rows="3" placeholder="بار کاری، دما، فشار، سرعت، اپراتور و سایر شرایط محیطی"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>آیا هشدار یا آلارمی فعال شده بود؟</label>
+                                <div class="radio-group">
+                                    <div class="form-check">
+                                        <input type="radio" id="alarmYes" name="alarm" value="yes" class="form-check-input">
+                                        <label for="alarmYes" class="form-check-label">بله</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" id="alarmNo" name="alarm" value="no" class="form-check-input" checked>
+                                        <label for="alarmNo" class="form-check-label">خیر</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" id="alarmUnknown" name="alarm" value="unknown" class="form-check-input">
+                                        <label for="alarmUnknown" class="form-check-label">نامشخص</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="alarmDetails">در صورت بله، مشخصات آلارم</label>
+                                <input type="text" id="alarmDetails" class="form-control" placeholder="کد آلارم، پیام، زمان وقوع" disabled>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="downtimeStart">شروع توقف تولید</label>
+                                <input type="datetime-local" id="downtimeStart" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="estimatedDowntime">زمان توقف تخمینی (ساعت)</label>
+                                <input type="number" id="estimatedDowntime" class="form-control" min="0" step="0.5" placeholder="0">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="productionLoss">تخمین زیان تولید</label>
+                                <div class="input-group">
+                                    <input type="number" id="productionLoss" class="form-control" min="0" placeholder="0">
+                                    <select class="form-control" id="productionLossUnit">
+                                        <option value="units">واحد</option>
+                                        <option value="kg">کیلوگرم</option>
+                                        <option value="meters">متر</option>
+                                        <option value="items">عدد</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بخش اقدامات اولیه -->
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-first-aid"></i> اقدامات اولیه و ایمنی</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="immediateActions">اقدامات فوری انجام شده <span class="required">*</span></label>
+                                <textarea id="immediateActions" class="form-control" rows="3" placeholder="قطع برق، جدا کردن تجهیز، نصب علائم هشدار، اطلاع‌رسانی و ..." required></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>وضعیت ایمنی محل</label>
+                                <div class="checkbox-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="safetyLockout" class="form-check-input">
+                                        <label for="safetyLockout" class="form-check-label">قفل‌گذاری/برچسب‌گذاری (LOTO) انجام شده</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="safetyBarricade" class="form-check-input">
+                                        <label for="safetyBarricade" class="form-check-label">ناحیه حفاظت شده است</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="safetyPpe" class="form-check-input">
+                                        <label for="safetyPpe" class="form-check-label">تجهیزات حفاظت فردی استفاده شده</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="safetyHazard" class="form-check-input">
+                                        <label for="safetyHazard" class="form-check-label">خطرات ایمنی شناسایی و کنترل شده</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="safetyRisks">خطرات ایمنی شناسایی شده</label>
+                                <textarea id="safetyRisks" class="form-control" rows="2" placeholder="شوک الکتریکی، حرکت قطعات، مواد خطرناک، دما و ..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بخش تحلیل اولیه -->
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-search"></i> تحلیل اولیه خرابی</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="suspectedCause">علت مشکوک خرابی</label>
+                                <select id="suspectedCause" class="form-control">
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="wear">سایش طبیعی</option>
+                                    <option value="fatigue">خستگی مواد</option>
+                                    <option value="overload">اضافه بار</option>
+                                    <option value="misalignment">ناهم‌محوری</option>
+                                    <option value="corrosion">خوردگی</option>
+                                    <option value="contamination">آلودگی</option>
+                                    <option value="improper_maintenance">نگهداری نامناسب</option>
+                                    <option value="operator_error">خطای اپراتور</option>
+                                    <option value="design_flaw">نقص طراحی</option>
+                                    <option value="manufacturing_defect">نقص ساخت</option>
+                                    <option value="external_factor">عامل خارجی</option>
+                                    <option value="unknown">نامشخص</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="affectedComponents">قطعات تأثیرپذیر</label>
+                                <input type="text" id="affectedComponents" class="form-control" placeholder="قطعاتی که احتمالاً آسیب دیده‌اند">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="preliminaryAnalysis">تحلیل اولیه</label>
+                            <textarea id="preliminaryAnalysis" class="form-control" rows="3" placeholder="نظرات اولیه، مشاهدات، احتمالات و ..."></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="requiredExpertise">تخصص مورد نیاز برای تعمیر</label>
+                                <select id="requiredExpertise" class="form-control" multiple>
+                                    <option value="mechanical">مکانیک</option>
+                                    <option value="electrical">برق</option>
+                                    <option value="electronics">الکترونیک</option>
+                                    <option value="hydraulics">هیدرولیک</option>
+                                    <option value="pneumatics">پنوماتیک</option>
+                                    <option value="instrumentation">ابزار دقیق</option>
+                                    <option value="software">نرم‌افزار</option>
+                                    <option value="welding">جوشکاری</option>
+                                </select>
+                                <small class="form-text">برای انتخاب چندگانه، کلید Ctrl را نگه دارید</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="estimatedRepairTime">زمان تخمینی تعمیر (ساعت)</label>
+                                <input type="number" id="estimatedRepairTime" class="form-control" min="0" step="0.5" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بخش مستندات و پیوست -->
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-paperclip"></i> مستندات و پیوست‌ها</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="photoEvidence">تصاویر مدارک</label>
+                                <div class="file-upload-area" id="photoUploadArea">
+                                    <i class="fas fa-camera"></i>
+                                    <p>برای آپلود تصاویر کلیک کنید یا فایل‌ها را اینجا بکشید</p>
+                                    <input type="file" id="photoEvidence" accept="image/*" multiple hidden>
+                                    <small>حداکثر ۵ تصویر، هر کدام تا ۵MB</small>
+                                </div>
+                                <div class="upload-preview" id="photoPreview"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="documentAttachments">ضمیمه مستندات</label>
+                                <div class="file-upload-area" id="documentUploadArea">
+                                    <i class="fas fa-file-alt"></i>
+                                    <p>برای آپلود مستندات کلیک کنید یا فایل‌ها را اینجا بکشید</p>
+                                    <input type="file" id="documentAttachments" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple hidden>
+                                    <small>فایل‌های PDF، Word، Excel تا ۱۰MB</small>
+                                </div>
+                                <div class="upload-preview" id="documentPreview"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="relatedWorkOrders">دستورکارهای مرتبط</label>
+                                <input type="text" id="relatedWorkOrders" class="form-control" placeholder="شماره دستورکارهای قبلی مرتبط">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="referenceDocuments">مستندات مرجع</label>
+                                <input type="text" id="referenceDocuments" class="form-control" placeholder="مانند: نقشه‌ها، کاتالوگ‌ها، دستورالعمل‌ها">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بخش تأیید و ارجاع -->
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-user-check"></i> تأیید و ارجاع</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="supervisorApproval">تأیید سرپرست بخش <span class="required">*</span></label>
+                                <select id="supervisorApproval" class="form-control" required>
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="approved">تأیید شده</option>
+                                    <option value="pending">در انتظار بررسی</option>
+                                    <option value="rejected">رد شده</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="supervisorName">نام سرپرست</label>
+                                <input type="text" id="supervisorName" class="form-control" placeholder="نام سرپرست تأییدکننده">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="supervisorDate">تاریخ تأیید</label>
+                                <input type="date" id="supervisorDate" class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="supervisorComments">نظرات سرپرست</label>
+                            <textarea id="supervisorComments" class="form-control" rows="2" placeholder="نظرات، اصلاحات یا دستورات خاص"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="assignToDepartment">ارجاع به دپارتمان</label>
+                                <select id="assignToDepartment" class="form-control">
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="maintenance">تعمیرات</option>
+                                    <option value="engineering">مهندسی</option>
+                                    <option value="quality">کنترل کیفی</option>
+                                    <option value="safety">ایمنی</option>
+                                    <option value="production">تولید</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="assignToPerson">ارجاع به شخص</label>
+                                <select id="assignToPerson" class="form-control">
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="EMP-001">علیرضا محمدی</option>
+                                    <option value="EMP-002">محمد رضایی</option>
+                                    <option value="EMP-003">فاطمه احمدی</option>
+                                    <option value="EMP-004">حسن کریمی</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="priorityLevel">اولویت پیگیری</label>
+                                <select id="priorityLevel" class="form-control">
+                                    <option value="low">کم</option>
+                                    <option value="medium" selected>متوسط</option>
+                                    <option value="high">بالا</option>
+                                    <option value="critical">بحرانی</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- دکمه‌های فرم -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary back-btn">
+                            <i class="fas fa-arrow-right"></i> بازگشت
+                        </button>
+                        <button type="button" class="btn btn-warning" id="saveDraft">
+                            <i class="fas fa-save"></i> ذخیره پیش‌نویس
+                        </button>
+                        <button type="button" class="btn btn-info" id="printReport">
+                            <i class="fas fa-print"></i> چاپ گزارش
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> ثبت نهایی گزارش
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+    <!-- عنوان در هدر صفحه -->
+    <meta name="page-title" content="فرم گزارش خرابی تجهیزات">
+    
+    
+
+
+
+
+    <!-- اسکریپت‌ها -->
+
+
+    <!-- اسکریپت هدر -->
+    <script src="../components/pages-header/header.js"></script>
+    <!-- اسکریپت فوتر -->
+    <script src="../components/pages-footer/footer.js"></script>
+    
+    <script src="../js/main.js"></script>        
+
+    <!-- اسکریپت بارگذاری منوی کناری یا سایدبار-->
+    <script>
+        // 1. اجرای فوری: قبل از هر چیزی چک کن آیا پین است؟
+        // اگر بله، کلاس را به بادی اضافه کن تا CSS فوراً اعمال شود
+        (function() {
+            const isPinned = localStorage.getItem('sidebarPinned') === 'true';
+            if (isPinned) {
+                document.body.classList.add('sidebar-pinned');
+            }
+        })();
+
+        // تابع تزریق HTML
+        function injectSidebarHTML(html) {
+            const container = document.getElementById('sidebar-container');
+            if (container.querySelector('.sidebar')) return;
+
+            container.innerHTML = html;
+            executeSidebarScript();
+        }
+
+        function loadSidebar() {
+            // 2. تلاش برای خواندن از کش (سرعت بالا)
+            const cachedHTML = localStorage.getItem('sidebarHTML_Cache');
+            if (cachedHTML) {
+                injectSidebarHTML(cachedHTML);
+            }
+
+            // 3. دانلود در پس‌زمینه برای آپدیت
+            fetch('../sidebar/sidebar.html?v=' + Date.now())
+                .then(response => response.text())
+                .then(html => {
+                    // اگر کش نبود، الان نمایش بده
+                    if (!cachedHTML) {
+                        injectSidebarHTML(html);
+                    }
+                    // آپدیت کش
+                    if (html !== cachedHTML) {
+                        localStorage.setItem('sidebarHTML_Cache', html);
+                    }
+                })
+                .catch(console.error);
+        }
+        
+        function executeSidebarScript() {
+            const existingScript = document.querySelector('script[src*="../sidebar/sidebar.js"]');
+            if (existingScript) existingScript.remove();
+            
+            const script = document.createElement('script');
+            script.src = '../sidebar/sidebar.js?v=' + Date.now();
+            script.async = false;
+            document.body.appendChild(script);
+        }
+        
+        // اجرا
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadSidebar);
+        } else {
+            loadSidebar();
+        }
+    </script>
+
+    <!-- اسکریپت‌های اختصاصی صفحه گزارش خرابی -->
+    <script>
+        // داده‌های نمونه تجهیزات
+        const equipmentData = {
+            "EQ-001": {
+                name: "کمپرسور اصلی",
+                location: "تاسیسات - اتاق کمپرسور",
+                lastService: "1402/05/10",
+                status: "فعال",
+                manufacturer: "Atlas Copco",
+                model: "GA 75"
+            },
+            "EQ-002": {
+                name: "دستگاه برش CNC",
+                location: "خط تولید ۱ - ایستگاه ۳",
+                lastService: "1402/06/05",
+                status: "نیاز به سرویس",
+                manufacturer: "Mazak",
+                model: "VCN-530C"
+            },
+            "EQ-003": {
+                name: "دیگ بخار",
+                location: "تاسیسات - اتاق بویلر",
+                lastService: "1402/04/20",
+                status: "در حال سرویس",
+                manufacturer: "Miura",
+                model: "LX-200"
+            },
+            "EQ-004": {
+                name: "سیستم خنک‌کننده مرکزی",
+                location: "پشت بام",
+                lastService: "1402/07/01",
+                status: "فعال",
+                manufacturer: "Carrier",
+                model: "30XA-250"
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // تنظیم تاریخ و زمان فعلی
+            const reportDate = document.getElementById('reportDate');
+            const failureTime = document.getElementById('failureTime');
+            const now = new Date();
+            
+            const formatDateTimeLocal = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            };
+            
+            reportDate.value = formatDateTimeLocal(now);
+            failureTime.value = formatDateTimeLocal(now);
+            
+            // تنظیم دکمه زمان فعلی
+            const btnNow = document.querySelector('.btn-now');
+            if (btnNow) {
+                btnNow.addEventListener('click', function() {
+                    reportDate.value = formatDateTimeLocal(new Date());
+                });
+            }
+            
+            // کپی شماره گزارش
+            const btnCopy = document.querySelector('.btn-copy');
+            if (btnCopy) {
+                btnCopy.addEventListener('click', function() {
+                    const reportNumber = document.getElementById('reportNumber');
+                    navigator.clipboard.writeText(reportNumber.value).then(() => {
+                        showToast('شماره گزارش کپی شد', 'success');
+                    });
+                });
+            }
+            
+            // مدیریت جزئیات تجهیز
+            const equipmentSelect = document.getElementById('equipmentSelection');
+            const equipmentDetailsCard = document.getElementById('equipmentDetailsCard');
+            const closeEquipmentDetails = document.getElementById('closeEquipmentDetails');
+            
+            closeEquipmentDetails.addEventListener('click', function() {
+                equipmentDetailsCard.style.display = 'none';
+            });
+            
+            // شمارش کاراکترهای شرح خرابی
+            const failureDescription = document.getElementById('failureDescription');
+            const descCharCount = document.getElementById('descCharCount');
+            
+            failureDescription.addEventListener('input', function() {
+                const length = this.value.length;
+                descCharCount.textContent = length;
+                
+                if (length > 1000) {
+                    descCharCount.style.color = '#e74c3c';
+                } else if (length > 800) {
+                    descCharCount.style.color = '#f39c12';
+                } else {
+                    descCharCount.style.color = '#27ae60';
+                }
+            });
+            
+            // فعال/غیرفعال کردن فیلد جزئیات آلارم
+            const alarmYes = document.getElementById('alarmYes');
+            const alarmNo = document.getElementById('alarmNo');
+            const alarmUnknown = document.getElementById('alarmUnknown');
+            const alarmDetails = document.getElementById('alarmDetails');
+            
+            function toggleAlarmDetails() {
+                alarmDetails.disabled = !alarmYes.checked;
+            }
+            
+            alarmYes.addEventListener('change', toggleAlarmDetails);
+            alarmNo.addEventListener('change', toggleAlarmDetails);
+            alarmUnknown.addEventListener('change', toggleAlarmDetails);
+            
+            // مدیریت آپلود تصاویر
+            const photoUploadArea = document.getElementById('photoUploadArea');
+            const photoEvidence = document.getElementById('photoEvidence');
+            const photoPreview = document.getElementById('photoPreview');
+            
+            photoUploadArea.addEventListener('click', () => photoEvidence.click());
+            photoUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                photoUploadArea.style.backgroundColor = '#e3f2fd';
+            });
+            photoUploadArea.addEventListener('dragleave', () => {
+                photoUploadArea.style.backgroundColor = '';
+            });
+            photoUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                photoUploadArea.style.backgroundColor = '';
+                handleFiles(e.dataTransfer.files, 'photo');
+            });
+            
+            photoEvidence.addEventListener('change', (e) => {
+                handleFiles(e.target.files, 'photo');
+            });
+            
+            // مدیریت آپلود مستندات
+            const documentUploadArea = document.getElementById('documentUploadArea');
+            const documentAttachments = document.getElementById('documentAttachments');
+            const documentPreview = document.getElementById('documentPreview');
+            
+            documentUploadArea.addEventListener('click', () => documentAttachments.click());
+            documentUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                documentUploadArea.style.backgroundColor = '#e3f2fd';
+            });
+            documentUploadArea.addEventListener('dragleave', () => {
+                documentUploadArea.style.backgroundColor = '';
+            });
+            documentUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                documentUploadArea.style.backgroundColor = '';
+                handleFiles(e.dataTransfer.files, 'document');
+            });
+            
+            documentAttachments.addEventListener('change', (e) => {
+                handleFiles(e.target.files, 'document');
+            });
+            
+            // تابع مدیریت فایل‌ها
+            function handleFiles(files, type) {
+                const previewContainer = type === 'photo' ? photoPreview : documentPreview;
+                const maxFiles = type === 'photo' ? 5 : 10;
+                const maxSize = type === 'photo' ? 5 : 10; // MB
+                
+                // بررسی تعداد فایل‌ها
+                if (files.length > maxFiles) {
+                    showToast(`حداکثر ${maxFiles} فایل مجاز است`, 'warning');
+                    return;
+                }
+                
+                Array.from(files).forEach(file => {
+                    // بررسی حجم فایل
+                    if (file.size > maxSize * 1024 * 1024) {
+                        showToast(`حجم فایل ${file.name} بیش از ${maxSize}MB است`, 'warning');
+                        return;
+                    }
+                    
+                    // بررسی نوع فایل
+                    const validTypes = type === 'photo' 
+                        ? ['image/jpeg', 'image/png', 'image/gif']
+                        : ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                           'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+                    
+                    if (!validTypes.includes(file.type)) {
+                        showToast(`نوع فایل ${file.name} مجاز نیست`, 'warning');
+                        return;
+                    }
+                    
+                    // ایجاد پیش‌نمایش
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    
+                    if (type === 'photo') {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            previewItem.appendChild(img);
+                            
+                            const info = document.createElement('div');
+                            info.className = 'file-info';
+                            info.innerHTML = `
+                                <span>${file.name}</span>
+                                <small>(${(file.size / 1024 / 1024).toFixed(2)} MB)</small>
+                            `;
+                            previewItem.appendChild(info);
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'remove-file';
+                            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                            removeBtn.onclick = () => previewItem.remove();
+                            previewItem.appendChild(removeBtn);
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        previewItem.innerHTML = `
+                            <i class="fas fa-file-${file.type.includes('word') ? 'word' : file.type.includes('excel') ? 'excel' : 'pdf'}"></i>
+                            <div class="file-info">
+                                <span>${file.name}</span>
+                                <small>(${(file.size / 1024 / 1024).toFixed(2)} MB)</small>
+                            </div>
+                            <button class="remove-file"><i class="fas fa-times"></i></button>
+                        `;
+                        previewItem.querySelector('.remove-file').onclick = () => previewItem.remove();
+                    }
+                    
+                    previewContainer.appendChild(previewItem);
+                });
+                
+                // پاک کردن فایل‌های انتخاب شده
+                if (type === 'photo') {
+                    photoEvidence.value = '';
+                } else {
+                    documentAttachments.value = '';
+                }
+            }
+            
+            // ذخیره پیش‌نویس
+            const saveDraftBtn = document.getElementById('saveDraft');
+            saveDraftBtn.addEventListener('click', function() {
+                const form = document.getElementById('failureReportForm');
+                const formData = new FormData(form);
+                const data = {};
+                
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+                
+                // ذخیره فایل‌های آپلود شده
+                const photoFiles = [];
+                const documentFiles = [];
+                
+                // در حالت واقعی اینجا فایل‌ها ذخیره می‌شوند
+                
+                data.photos = photoFiles;
+                data.documents = documentFiles;
+                
+                localStorage.setItem('failureReportDraft', JSON.stringify(data));
+                showToast('پیش‌نویس با موفقیت ذخیره شد', 'success');
+            });
+            
+            // بارگذاری پیش‌نویس ذخیره شده
+            const savedDraft = localStorage.getItem('failureReportDraft');
+            if (savedDraft) {
+                setTimeout(() => {
+                    const confirmLoad = confirm('یک پیش‌نویس ذخیره شده وجود دارد. آیا مایل به بارگذاری آن هستید؟');
+                    if (confirmLoad) {
+                        const draftData = JSON.parse(savedDraft);
+                        
+                        // پر کردن فیلدها با داده‌های ذخیره شده
+                        Object.keys(draftData).forEach(key => {
+                            if (key !== 'photos' && key !== 'documents') {
+                                const field = document.getElementById(key);
+                                if (field) {
+                                    field.value = draftData[key];
+                                }
+                            }
+                        });
+                        
+                        showToast('پیش‌نویس با موفقیت بارگذاری شد', 'info');
+                    }
+                }, 1000);
+            }
+            
+            // چاپ گزارش
+            const printReportBtn = document.getElementById('printReport');
+            printReportBtn.addEventListener('click', function() {
+                // اعتبارسنجی فرم قبل از چاپ
+                const isValid = validateForm();
+                if (isValid) {
+                    // ذخیره موقت داده‌ها
+                    const formData = getFormData();
+                    sessionStorage.setItem('printData', JSON.stringify(formData));
+                    
+                    // باز کردن پنجره چاپ
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html dir="rtl">
+                            <head>
+                                <title>گزارش خرابی - چاپ</title>
+                                <style>
+                                    body { font-family: 'Vazirmatn', sans-serif; padding: 20px; }
+                                    .print-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px; }
+                                    .print-section { margin-bottom: 25px; }
+                                    .print-section h3 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+                                    .print-row { display: flex; margin-bottom: 10px; }
+                                    .print-label { font-weight: bold; width: 40%; }
+                                    .print-value { width: 60%; }
+                                    @media print {
+                                        .no-print { display: none; }
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="print-header">
+                                    <h1>گزارش خرابی تجهیزات</h1>
+                                    <p>شماره گزارش: ${document.getElementById('reportNumber').value}</p>
+                                    <p>تاریخ گزارش: ${document.getElementById('reportDate').value}</p>
+                                </div>
+                                <div class="print-content">
+                                    <div class="print-section">
+                                        <h3>اطلاعات عمومی</h3>
+                                        <div class="print-row">
+                                            <div class="print-label">گزارش‌دهنده:</div>
+                                            <div class="print-value">${document.getElementById('reportedBy').value}</div>
+                                        </div>
+                                        <!-- سایر اطلاعات -->
+                                    </div>
+                                    <div class="no-print" style="margin-top: 30px;">
+                                        <button onclick="window.print()">چاپ گزارش</button>
+                                        <button onclick="window.close()">بستن</button>
+                                    </div>
+                                </div>
+                            </body>
+                        </html>
+                    `);
+                    printWindow.document.close();
+                }
+            });
+            
+            // اعتبارسنجی فرم
+            function validateForm() {
+                let isValid = true;
+                const requiredFields = document.querySelectorAll('[required]');
+                
+                requiredFields.forEach(field => {
+                    field.classList.remove('error');
+                    
+                    if (!field.value.trim()) {
+                        field.classList.add('error');
+                        isValid = false;
+                        
+                        // اسکرول به فیلد دارای خطا
+                        if (isValid === false) {
+                            field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            field.focus();
+                        }
+                    }
+                });
+                
+                return isValid;
+            }
+            
+            // گرفتن داده‌های فرم
+            function getFormData() {
+                const form = document.getElementById('failureReportForm');
+                const formData = new FormData(form);
+                const data = {};
+                
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+                
+                return data;
+            }
+            
+            // ارسال فرم
+            const failureReportForm = document.getElementById('failureReportForm');
+            failureReportForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (validateForm()) {
+                    // شبیه‌سازی ارسال به سرور
+                    const formData = getFormData();
+                    
+                    // تولید شماره دستورکار خودکار
+                    const workOrderNumber = generateWorkOrderNumber();
+                    
+                    // نمایش پیام موفقیت
+                    showToast(`گزارش خرابی با موفقیت ثبت شد. شماره دستورکار: ${workOrderNumber}`, 'success');
+                    
+                    // پاک کردن پیش‌نویس ذخیره شده
+                    localStorage.removeItem('failureReportDraft');
+                    
+                    // بازگشت به داشبورد بعد از 3 ثانیه
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 3000);
+                }
+            });
+            
+            // تابع تولید شماره دستورکار
+            function generateWorkOrderNumber() {
+                const year = new Date().getFullYear();
+                const month = String(new Date().getMonth() + 1).padStart(2, '0');
+                const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                return `WO-${year}${month}-${randomNum}`;
+            }
+            
+            // نمایش تاریخ در هدر
+            const dateElement = document.getElementById('currentDate');
+            if (dateElement) {
+                const today = new Date().toLocaleDateString('fa-IR');
+                dateElement.textContent = today;
+            }
+            
+            // مدیریت منوی همبرگر برای موبایل
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
+        });
+        
+        // تابع نمایش نوتیفیکیشن
+        function showToast(message, type = 'info') {
+            // پیاده‌سازی مشابه main.js
+            console.log(`${type.toUpperCase()}: ${message}`);
+            alert(message); // در حالت واقعی از پیاده‌سازی کامل استفاده شود
+        }
+    </script>
+
+
+<script>
+// ==================== مدیریت انتخاب تجهیز با Select2 برای گزارش خرابی ====================
+
+let equipmentSelectInitialized = false;
+let allEquipment = []; // ذخیره تمام تجهیزات برای جستجوی سریع‌تر
+
+// تابع بارگذاری تجهیزات برای Select2
+async function initializeEquipmentSelect() {
+    if (equipmentSelectInitialized) return;
+    
+    const $select = $('#equipmentSelect');
+    
+    try {
+        // تنظیمات پیشرفته Select2 با قابلیت جستجو
+        $select.select2({
+            placeholder: 'نام تجهیز، کد یا محل را وارد کنید...',
+            allowClear: true,
+            width: '100%',
+            dir: 'rtl',
+            minimumResultsForSearch: 0, // این گزینه باعث می‌شود باکس جستجو همیشه نمایش داده شود
+            minimumInputLength: 0, // جستجو از همان ابتدا فعال است
+            language: {
+                inputTooShort: function() { return "لطفاً حداقل {number} کاراکتر وارد کنید"; },
+                inputTooLong: function() { return "لطفاً {number} کاراکتر حذف کنید"; },
+                errorLoading: function() { return "خطا در بارگذاری نتایج"; },
+                loadingMore: function() { return "در حال بارگذاری نتایج بیشتر..."; },
+                maximumSelected: function() { return "شما تنها می‌توانید {number} آیتم انتخاب کنید"; },
+                noResults: function() { return "نتیجه‌ای یافت نشد"; },
+                searching: function() { return "در حال جستجو..."; },
+                removeAllItems: function() { return "حذف همه موارد"; },
+                removeItem: function() { return "حذف"; },
+                search: function() { return "جستجو"; }
+            },
+            escapeMarkup: function(markup) { return markup; },
+            templateResult: formatEquipmentOption,
+            templateSelection: formatEquipmentSelection,
+            matcher: function(params, data) {
+                // اگر پارامتر جستجو خالی باشد، همه موارد را نشان بده
+                if ($.trim(params.term) === '') {
+                    return data;
+                }
+                
+                // جستجو در متن و داده‌های اضافی
+                const searchTerm = params.term.toLowerCase();
+                const equipment = $(data.element).data('equipment');
+                
+                if (equipment) {
+                    // جستجو در نام، کد، محل، نوع و مدل
+                    const searchableText = [
+                        equipment.name,
+                        equipment.code,
+                        equipment.location,
+                        equipment.type,
+                        equipment.model,
+                        equipment.serial_number
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    
+                    if (searchableText.includes(searchTerm)) {
+                        return data;
+                    }
+                    
+                    // جستجوی فازی ساده (تطبیق جزئی)
+                    const words = searchTerm.split(' ');
+                    const matchesAllWords = words.every(word => 
+                        searchableText.includes(word) || 
+                        (equipment.name && equipment.name.toLowerCase().includes(word)) ||
+                        (equipment.code && equipment.code.toLowerCase().includes(word)) ||
+                        (equipment.location && equipment.location.toLowerCase().includes(word))
+                    );
+                    
+                    if (matchesAllWords) {
+                        return data;
+                    }
+                    
+                    return null;
+                }
+                
+                // اگر داده‌ای نبود، جستجوی معمولی انجام بده
+                if (data.text.toLowerCase().includes(searchTerm)) {
+                    return data;
+                }
+                
+                return null;
+            },
+            sorter: function(data) {
+                // مرتب‌سازی نتایج بر اساس بحرانی بودن
+                return data.sort(function(a, b) {
+                    const equipmentA = $(a.element).data('equipment');
+                    const equipmentB = $(b.element).data('equipment');
+                    
+                    if (!equipmentA || !equipmentB) return 0;
+                    
+                    // اولویت بر اساس بحرانی بودن (بحرانی اول)
+                    const criticalityOrder = { 'critical': 0, 'high': 1, 'medium': 2, 'low': 3 };
+                    const orderA = criticalityOrder[equipmentA.criticality] || 4;
+                    const orderB = criticalityOrder[equipmentB.criticality] || 4;
+                    
+                    if (orderA !== orderB) {
+                        return orderA - orderB;
+                    }
+                    
+                    // سپس بر اساس نام
+                    return (equipmentA.name || '').localeCompare(equipmentB.name || '', 'fa');
+                });
+            }
+        });
+        
+        // نمایش پیام بارگذاری
+        $select.select2('open'); // باز کردن dropdown برای نشان دادن پیام بارگذاری
+        
+        // بارگذاری تجهیزات از سرور
+        const url = '../api/get-equipments.php';
+        console.log('📡 بارگذاری تجهیزات برای Select2...');
+        
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            allEquipment = result.data;
+            
+            // پاک کردن گزینه‌های قبلی
+            $select.empty().append('<option value=""></option>');
+            
+            // اضافه کردن تجهیزات به Select2
+            allEquipment.forEach(equipment => {
+                const displayText = `${equipment.name} (${equipment.code}) - ${equipment.location}`;
+                const option = new Option(displayText, equipment.id, false, false);
+                $(option).data('equipment', equipment);
+                $select.append(option);
+            });
+            
+            // بروزرسانی placeholder
+            $select.select2({
+                placeholder: 'نام تجهیز، کد یا محل را وارد کنید...'
+            });
+            
+            console.log(`✅ ${allEquipment.length} تجهیز بارگذاری شد`);
+            
+            // بستن dropdown بعد از بارگذاری
+            $select.select2('close');
+            
+        } else {
+            console.error('❌ خطا در بارگذاری تجهیزات:', result.message);
+            showToast('خطا در بارگذاری لیست تجهیزات', 'error');
+            
+            // استفاده از داده‌های نمونه
+            loadSampleEquipment($select);
+        }
+        
+    } catch (error) {
+        console.error('❌ خطا در بارگذاری تجهیزات:', error);
+        showToast('خطا در بارگذاری لیست تجهیزات', 'error');
+        
+        // استفاده از داده‌های نمونه
+        loadSampleEquipment($select);
+    }
+    
+    equipmentSelectInitialized = true;
+}
+
+// تابع بارگذاری داده‌های نمونه
+function loadSampleEquipment($select) {
+    allEquipment = [
+        { id: 1, code: 'MIX-101', name: 'میکسر صنعتی', type: 'تجهیز تولید', model: 'MixPro-5000', serial_number: 'SN-MIX-101', location: 'سالن تولید A - خط ۱', criticality: 'critical', status: 'active', last_maintenance_date: '1402/12/15', next_maintenance_date: '1403/03/15' },
+        { id: 2, code: 'CMP-202', name: 'کمپرسور هوا', type: 'تاسیسات', model: 'AirComp-2000', serial_number: 'SN-CMP-202', location: 'موتورخانه مرکزی', criticality: 'high', status: 'active', last_maintenance_date: '1402/11/20', next_maintenance_date: '1403/02/20' },
+        { id: 3, code: 'CNV-303', name: 'نوار نقاله', type: 'تجهیز خط تولید', model: 'Convey-300', serial_number: 'SN-CNV-303', location: 'سالن تولید B - خط بسته‌بندی', criticality: 'medium', status: 'maintenance', last_maintenance_date: '1402/10/05', next_maintenance_date: '1403/01/05' },
+        { id: 4, code: 'PLC-404', name: 'کنترلر PLC', type: 'سیستم کنترل', model: 'Siemens S7-1200', serial_number: 'SN-PLC-404', location: 'تابلوی برق اصلی', criticality: 'critical', status: 'active', last_maintenance_date: '1402/09/10', next_maintenance_date: '1403/03/10' },
+        { id: 5, code: 'PMP-505', name: 'پمپ آب', type: 'تاسیسات', model: 'Grundfos', serial_number: 'SN-PMP-505', location: 'ایستگاه پمپاژ', criticality: 'medium', status: 'active', last_maintenance_date: '1402/08/25', next_maintenance_date: '1403/02/25' },
+        { id: 6, code: 'FAN-606', name: 'هواکش صنعتی', type: 'تهویه', model: 'Vent-1000', serial_number: 'SN-FAN-606', location: 'سقف سالن تولید', criticality: 'low', status: 'inactive', last_maintenance_date: '1402/07/30', next_maintenance_date: '1403/01/30' },
+        { id: 7, code: 'BOI-707', name: 'دیگ بخار', type: 'تاسیسات حرارتی', model: 'SteamGen-500', serial_number: 'SN-BOI-707', location: 'موتورخانه', criticality: 'critical', status: 'active', last_maintenance_date: '1402/06/15', next_maintenance_date: '1403/06/15' },
+        { id: 8, code: 'ELE-808', name: 'تابلوی برق', type: 'الکتریکال', model: 'Panel-400', serial_number: 'SN-ELE-808', location: 'اتاق برق', criticality: 'high', status: 'active', last_maintenance_date: '1402/05/20', next_maintenance_date: '1403/05/20' }
+    ];
+    
+    $select.empty().append('<option value=""></option>');
+    allEquipment.forEach(equipment => {
+        const displayText = `${equipment.name} (${equipment.code}) - ${equipment.location}`;
+        const option = new Option(displayText, equipment.id, false, false);
+        $(option).data('equipment', equipment);
+        $select.append(option);
+    });
+    
+    $select.select2({
+        placeholder: 'نام تجهیز، کد یا محل را وارد کنید...'
+    });
+}
+
+// فرمت نمایش گزینه‌ها در dropdown
+function formatEquipmentOption(option) {
+    if (!option.id) return option.text;
+    
+    const $option = $(option.element);
+    const equipment = $option.data('equipment');
+    
+    if (!equipment) return option.text;
+    
+    // تعیین رنگ و آیکون بر اساس بحرانی بودن
+    let criticalityColor = '#27ae60'; // کم
+    let criticalityIcon = 'fa-thermometer-half';
+    if (equipment.criticality === 'high') { 
+        criticalityColor = '#e67e22';
+        criticalityIcon = 'fa-exclamation-triangle';
+    }
+    if (equipment.criticality === 'critical') { 
+        criticalityColor = '#e74c3c';
+        criticalityIcon = 'fa-bolt';
+    }
+    
+    // تعیین آیکون وضعیت
+    let statusIcon = 'fa-check-circle';
+    let statusColor = '#27ae60';
+    if (equipment.status === 'inactive') {
+        statusIcon = 'fa-times-circle';
+        statusColor = '#95a5a6';
+    } else if (equipment.status === 'maintenance') {
+        statusIcon = 'fa-tools';
+        statusColor = '#f39c12';
+    } else if (equipment.status === 'out_of_service') {
+        statusIcon = 'fa-ban';
+        statusColor = '#e74c3c';
+    }
+    
+    const $container = $(
+        `<div style="display: flex; align-items: center; padding: 8px; direction: rtl; border-bottom: 1px solid #ecf0f1;">
+            <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                    <span style="font-weight: 700; color: #2c3e50;">${equipment.name}</span>
+                    <span style="background-color: #ecf0f1; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: #7f8c8d;">${equipment.code}</span>
+                </div>
+                <div style="display: flex; gap: 15px; font-size: 0.85rem; color: #7f8c8d; margin-bottom: 4px;">
+                    <span><i class="fas fa-map-marker-alt" style="margin-left: 4px; color: #3498db;"></i>${equipment.location}</span>
+                    <span><i class="fas fa-cube" style="margin-left: 4px; color: #9b59b6;"></i>${equipment.type || 'نامشخص'}</span>
+                    <span><i class="fas fa-microchip" style="margin-left: 4px; color: #e67e22;"></i>${equipment.model || 'نامشخص'}</span>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px; margin-right: 15px;">
+                <span style="display: flex; align-items: center; gap: 5px;">
+                    <i class="fas ${statusIcon}" style="color: ${statusColor};"></i>
+                    <span style="font-size: 0.8rem;">${getStatusText(equipment.status)}</span>
+                </span>
+                <span style="display: flex; align-items: center; gap: 5px;">
+                    <i class="fas ${criticalityIcon}" style="color: ${criticalityColor};"></i>
+                    <span style="font-size: 0.8rem; color: ${criticalityColor};">${getCriticalityText(equipment.criticality)}</span>
+                </span>
+            </div>
+        </div>`
+    );
+    
+    return $container;
+}
+
+// فرمت نمایش گزینه انتخاب شده
+function formatEquipmentSelection(option) {
+    if (!option.id) return option.text;
+    
+    const $option = $(option.element);
+    const equipment = $option.data('equipment');
+    
+    if (!equipment) return option.text;
+    
+    return `${equipment.name} (${equipment.code})`;
+}
+
+// دریافت متن بحرانی
+function getCriticalityText(criticality) {
+    switch(criticality) {
+        case 'critical': return 'بحرانی';
+        case 'high': return 'بالا';
+        case 'medium': return 'متوسط';
+        case 'low': return 'کم';
+        default: return 'نامشخص';
+    }
+}
+
+// دریافت متن وضعیت
+function getStatusText(status) {
+    switch(status) {
+        case 'active': return 'فعال';
+        case 'inactive': return 'غیرفعال';
+        case 'maintenance': return 'در تعمیر';
+        case 'out_of_service': return 'خارج سرویس';
+        default: return 'نامشخص';
+    }
+}
+
+// تابع نمایش کارت تجهیز انتخاب شده
+function showEquipmentCard(equipment) {
+    const cardContainer = document.getElementById('selectedEquipmentCard');
+    if (!cardContainer) return;
+    
+    // تعیین کلاس بحرانی
+    let criticalityClass = 'impact-low';
+    let criticalityText = 'کم';
+    
+    switch(equipment.criticality) {
+        case 'critical':
+            criticalityClass = 'impact-high';
+            criticalityText = 'بحرانی';
+            break;
+        case 'high':
+            criticalityClass = 'impact-medium';
+            criticalityText = 'بالا';
+            break;
+        case 'medium':
+            criticalityClass = 'impact-medium';
+            criticalityText = 'متوسط';
+            break;
+    }
+    
+    // متن وضعیت
+    let statusText = 'فعال';
+    let statusClass = '';
+    switch(equipment.status) {
+        case 'inactive': 
+            statusText = 'غیرفعال';
+            statusClass = 'priority-low';
+            break;
+        case 'maintenance': 
+            statusText = 'در تعمیر';
+            statusClass = 'priority-medium';
+            break;
+        case 'out_of_service': 
+            statusText = 'خارج سرویس';
+            statusClass = 'priority-critical';
+            break;
+    }
+    
+    // ساخت کارت با نمایش عنوان و مقدار در کنار هم - نسخه Flexbox
+    cardContainer.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div>
+                <h4 style="margin: 0 0 5px 0; color: var(--form-primary);">${equipment.name}
+                <span style="background-color: #ecf0f1; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: #7f8c8d; margin-right: 25px;">${equipment.code}</span></h4>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <span class="priority-badge ${statusClass}">${statusText}</span>
+                <span class="impact-level ${criticalityClass}">${criticalityText}</span>
+            </div>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                <div style="flex: 1 1 200px;">
+                    <div style="display: flex; align-items: baseline; margin-bottom: 10px;">
+                        <span class="detail-label" style="min-width: 100px;"><i class="fas fa-map-marker-alt" style="margin-left: 5px;"></i>محل استقرار:</span>
+                        <span class="detail-value" style="margin-right: 10px;">${equipment.location}</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; margin-bottom: 10px;">
+                        <span class="detail-label" style="min-width: 100px;"><i class="fas fa-cube" style="margin-left: 5px;"></i>نوع تجهیز:</span>
+                        <span class="detail-value" style="margin-right: 10px;">${equipment.type || 'نامشخص'}</span>
+                    </div>
+                </div>
+                <div style="flex: 1 1 200px;">
+                    <div style="display: flex; align-items: baseline; margin-bottom: 10px;">
+                        <span class="detail-label" style="min-width: 100px;"><i class="fas fa-microchip" style="margin-left: 5px;"></i>مدل:</span>
+                        <span class="detail-value" style="margin-right: 10px;">${equipment.model || 'نامشخص'}</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; margin-bottom: 10px;">
+                        <span class="detail-label" style="min-width: 100px;"><i class="fas fa-barcode" style="margin-left: 5px;"></i>شماره سریال:</span>
+                        <span class="detail-value" style="margin-right: 10px;">${equipment.serial_number || 'نامشخص'}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background-color: #fff; padding: 15px; border-radius: 8px; border: 1px solid var(--form-border);">
+            <div style="display: flex; flex-wrap: wrap; gap: 150px;">
+                <div style="display: flex; align-items: baseline;">
+                    <span class="detail-label" style="min-width: 90px;">آخرین تعمیر:</span>
+                    <span class="detail-value" style="margin-right: 10px;">${equipment.last_maintenance_date || 'ندارد'}</span>
+                </div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="detail-label" style="min-width: 90px;">تعمیر بعدی:</span>
+                    <span class="detail-value" style="margin-right: 10px;">${equipment.next_maintenance_date || 'نامشخص'}</span>
+                </div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="detail-label" style="min-width: 90px;">وضعیت گارانتی:</span>
+                    <span class="detail-value" style="margin-right: 10px;">${equipment.warranty_status || 'نامشخص'}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    cardContainer.style.display = 'block';
+    cardContainer.classList.add('selected');
+    
+    // پر کردن فیلد محل
+    const sectionField = document.getElementById('section');
+    if (sectionField && equipment.location) {
+        sectionField.value = equipment.location;
+    }
+    
+    // ذخیره تجهیز انتخاب شده
+    selectedEquipment = equipment;
+    
+    // بروزرسانی فیلدهای مخفی
+    updateHiddenFields();
+}
+
+
+// رویداد تغییر Select2
+$('#equipmentSelect').on('change', function() {
+    const selectedId = $(this).val();
+    
+    if (selectedId) {
+        // پیدا کردن تجهیز انتخاب شده
+        const selectedOption = $(this).find('option:selected');
+        const equipment = selectedOption.data('equipment');
+        
+        if (equipment) {
+            showEquipmentCard(equipment);
+            
+            // نمایش پیام موفقیت
+            showToast(`تجهیز "${equipment.name}" انتخاب شد`, 'success');
+        }
+    } else {
+        // مخفی کردن کارت اگر هیچ گزینه‌ای انتخاب نشده
+        document.getElementById('selectedEquipmentCard').style.display = 'none';
+        selectedEquipment = null;
+        updateHiddenFields();
+    }
+});
+
+
+
+// باز کردن dropdown هنگام کلیک روی فیلد جستجو
+$('#equipmentSelect').on('select2:open', function() {
+    // فوکوس روی باکس جستجو
+    setTimeout(function() {
+        const searchField = document.querySelector('.select2-search__field');
+        if (searchField) {
+            searchField.focus();
+        } else {
+            console.log('⚠️ فیلد جستجو هنوز ایجاد نشده، تلاش مجدد...');
+            // تلاش مجدد بعد از 200 میلی‌ثانیه
+            setTimeout(() => {
+                const retrySearchField = document.querySelector('.select2-search__field');
+                if (retrySearchField) retrySearchField.focus();
+            }, 200);
+        }
+    }, 100);
+});
+
+// راه‌اندازی Select2 بعد از بارگذاری صفحه
+setTimeout(() => {
+    if (typeof $ !== 'undefined' && $.fn.select2) {
+        initializeEquipmentSelect();
+    } else {
+        // اگر jQuery یا Select2 هنوز لود نشده، منتظر بمان
+        const checkInterval = setInterval(() => {
+            if (typeof $ !== 'undefined' && $.fn.select2) {
+                clearInterval(checkInterval);
+                initializeEquipmentSelect();
+            }
+        }, 100);
+        
+        // Timeout بعد از 5 ثانیه
+        setTimeout(() => clearInterval(checkInterval), 5000);
+    }
+}, 500);
+
+
+// مدیریت ورود دستی تجهیز
+document.getElementById('toggleManualEntry').addEventListener('click', function() {
+    const manualSection = document.getElementById('manualEquipmentSection');
+    const equipmentSelect = document.getElementById('equipmentSelect');
+    const selectedCard = document.getElementById('selectedEquipmentCard');
+    
+    if (manualSection.style.display === 'none') {
+        manualSection.style.display = 'block';
+        equipmentSelect.style.display = 'none';
+        selectedCard.style.display = 'none';
+        this.innerHTML = '<i class="fas fa-list"></i> نمایش لیست تجهیزات';
+        
+        // غیرفعال کردن Select2
+        $(equipmentSelect).select2('destroy');
+        equipmentSelect.style.width = '100%';
+    } else {
+        manualSection.style.display = 'none';
+        equipmentSelect.style.display = 'block';
+        selectedCard.style.display = 'none';
+        this.innerHTML = '<i class="fas fa-edit"></i> وارد کردن دستی اطلاعات';
+        
+        // راه‌اندازی مجدد Select2
+        $(equipmentSelect).select2({
+            placeholder: 'نام تجهیز، کد یا محل را وارد کنید...',
+            allowClear: true,
+            width: '100%',
+            dir: 'rtl'
+        });
+    }
+});
+// حذف پیام موفقیت قبلی
+function removeMapSuccessMessage() {
+    const existingMessage = mapUploadArea.parentNode.querySelector('.upload-success-message');
+    if (existingMessage) existingMessage.remove();
+}
+
+
+// ==================== پایان بخش انتخاب تجهیز ====================
+</script>
+
+
+
+
+
+
+
+
+
+</body>
+</html>

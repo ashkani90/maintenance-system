@@ -1,0 +1,2789 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فرم درخواست کار | سیستم جامع نگهداری و تعمیرات</title>
+    <!-- استایل‌های اصلی -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- استایل‌های سایدبار -->
+    <link rel="stylesheet" href="../sidebar/sidebar.css">
+    <!-- آیکون ها 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">-->
+    <!-- فونت‌ها     
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">-->
+    <!-- معرفی دو کتابخانه Flatpickr و Select2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+
+
+    <!-- استفاده از کتابخانه محلی-->
+    <link rel="stylesheet" href="../libs/font-awesome-Pro.6.7.2/web/css/all.min.css">
+    <link rel="stylesheet" href="../css/vazirmatn.css">
+    
+
+
+    <style>
+        /* استایل‌های اختصاصی فرم */
+        :root {
+            --form-primary: #2c3e50;
+            --form-secondary: #3498db;
+            --form-success: #27ae60;
+            --form-warning: #f39c12;
+            --form-danger: #e74c3c;
+            --form-info: #2980b9;
+            --form-light: #f8f9fa;
+            --form-dark: #2c3e50;
+            --form-border: #dee2e6;
+            --form-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .form-stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 0;
+            left: 0;
+            height: 2px;
+            background-color: var(--form-border);
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--form-light);
+            border: 2px solid var(--form-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--form-dark);
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background-color: var(--form-secondary);
+            border-color: var(--form-secondary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 5px rgba(52, 152, 219, 0.2);
+        }
+
+        .step.completed .step-circle {
+            background-color: var(--form-success);
+            border-color: var(--form-success);
+            color: white;
+        }
+
+        .step.completed .step-circle::after {
+            content: '✓';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--form-dark);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .step.active .step-label {
+            color: var(--form-secondary);
+            font-weight: 700;
+        }
+
+        .step-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--form-shadow);
+            border: 1px solid var(--form-border);
+            transition: transform 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section-title {
+            color: var(--form-primary);
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--form-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section-title i {
+            color: var(--form-secondary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--form-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-label .required {
+            color: var(--form-danger);
+            margin-right: 4px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--form-border);
+            border-radius: 8px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--form-secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: #f8fafc;
+        }
+
+        .form-control.error {
+            border-color: var(--form-danger);
+            background-color: #fff5f5;
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .form-radio-group, .form-checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 5px;
+        }
+
+        .form-radio, .form-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .form-radio input, .form-checkbox input {
+            margin-left: 8px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .form-radio label, .form-checkbox label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .priority-low { background-color: #d4edda; color: #155724; }
+        .priority-medium { background-color: #fff3cd; color: #856404; }
+        .priority-high { background-color: #f8d7da; color: #721c24; }
+        .priority-critical { background-color: #721c24; color: white; }
+
+        .attachment-area {
+            border: 2px dashed var(--form-border);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--form-light);
+        }
+
+        .attachment-area:hover {
+            border-color: var(--form-secondary);
+            background-color: #e3f2fd;
+        }
+
+        .attachment-area i {
+            font-size: 3rem;
+            color: var(--form-secondary);
+            margin-bottom: 15px;
+        }
+
+        .attachment-list {
+            margin-top: 20px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background-color: var(--form-light);
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .attachment-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .attachment-icon {
+            color: var(--form-secondary);
+        }
+
+        .attachment-remove {
+            color: var(--form-danger);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .attachment-remove:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        .equipment-card {
+            border: 2px solid var(--form-border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .equipment-card:hover {
+            border-color: var(--form-secondary);
+            background-color: #f8fafc;
+            transform: translateX(-5px);
+        }
+
+        .equipment-card.selected {
+            border-color: var(--form-success);
+            background-color: #f0fff4;
+        }
+
+        .equipment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--form-border);
+        }
+
+        .detail-item {
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--form-primary);
+            font-weight: 600;
+        }
+
+        .safety-alert {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .safety-alert i {
+            color: #f39c12;
+            font-size: 1.5rem;
+        }
+
+        .safety-alert.warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+        }
+
+        .safety-alert.danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .safety-alert.danger i {
+            color: var(--form-danger);
+        }
+
+        .impact-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .impact-low { background-color: #d4edda; color: #155724; }
+        .impact-medium { background-color: #fff3cd; color: #856404; }
+        .impact-high { background-color: #f8d7da; color: #721c24; }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 2px solid var(--form-border);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn i {
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--form-secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--form-light);
+            color: var(--form-dark);
+            border: 2px solid var(--form-border);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .btn-success {
+            background-color: var(--form-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--form-secondary);
+            color: var(--form-secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--form-secondary);
+            color: white;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .work-request-summary {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid var(--form-border);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid var(--form-border);
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--form-primary);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--form-secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-stepper {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .form-stepper::before {
+                display: none;
+            }
+            
+            .step {
+                flex-direction: row;
+                width: 100%;
+                gap: 15px;
+            }
+            
+            .step-circle {
+                margin-bottom: 0;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .navigation-buttons {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+    </style>
+
+
+
+</head>
+<body>
+
+    
+    <!-- تعریف آدرس مسیر صفحه -->
+    <body data-page-title="فرم درخواست کار" data-breadcrumb="فرم ها|../forms/work-request.html,اعلان‌ها">  
+
+    <!-- بارگذاری سایدبار -->
+    <div id="sidebar-container"></div>
+
+    <!-- محتوای اصلی -->
+    <main class="main-content">
+
+        <!-- مراحل فرم -->
+        <div class="form-stepper">
+            <div class="step active" data-step="1">
+                <div class="step-circle">1</div>
+                <div class="step-label">اطلاعات اولیه</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-circle">2</div>
+                <div class="step-label">تجهیزات و محل</div>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-circle">3</div>
+                <div class="step-label">جزئیات درخواست</div>
+            </div>
+            <div class="step" data-step="4">
+                <div class="step-circle">4</div>
+                <div class="step-label">پیوست‌ها و تأیید</div>
+            </div>
+        </div>
+        
+        <!-- فرم اصلی -->
+        <div class="form-container">
+            <form id="workRequestForm" class="form-body" action="../api/save-work-request.php" method="POST" enctype="multipart/form-data">
+                <!-- مرحله ۱: اطلاعات اولیه -->
+                <div class="step-content active" id="step-1">
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-user-circle"></i> اطلاعات درخواست‌کننده</h2>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="required">*</span> نام درخواست‌کننده
+                                </label>
+                                <input type="text" id="requesterName" name="requesterName" class="form-control" 
+                                        placeholder="نام و نام خانوادگی" required
+                                        value="" >
+                                <span class="form-text">نام شما به طور خودکار از پروفایل کاربری بارگیری شده است</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="required">*</span> دپارتمان
+                                </label>
+                                <select id="department" name="department" class="form-control" required>
+                                    <option value="">انتخاب دپارتمان</option>
+                                    <option value="production" selected>تولید</option>
+                                    <option value="quality">کنترل کیفی</option>
+                                    <option value="maintenance">تعمیرات و نگهداری</option>
+                                    <option value="facilities">تاسیسات</option>
+                                    <option value="packaging">بسته‌بندی</option>
+                                    <option value="warehouse">انبار</option>
+                                    <option value="rnd">تحقیق و توسعه</option>
+                                    <option value="office">اداری</option>
+                                    <option value="IT">فناوری اطلاعات</option>
+                                    <option value="security">انتظامات</option>
+                                    <option value="safety">ایمنی</option>
+                                    <option value="other">سایر</option>                                    
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="required">*</span> شماره تماس
+                                </label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control" 
+                                        placeholder="۰۹۱۲۱۲۳۴۵۶۷" required
+                                        pattern="09[0-9]{9}" 
+                                        title="شماره تلفن باید با ۰۹ شروع شده و ۱۱ رقمی باشد">
+                                <span class="form-text">برای ارتباط فوری در صورت نیاز</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">ایمیل</label>
+                                <input type="email" id="email" name="email" class="form-control" 
+                                        placeholder="example@company.com">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">شماره درخواست</label>
+                            <div class="form-control" style="background-color: #f8f9fa; font-weight: 600;">
+                                <span id="requestNumber">WR-2023-001</span>
+                                <button type="button" id="copyRequestNumber" class="btn-outline" style="padding: 5px 10px; font-size: 0.9rem; margin-right: 10px;">
+                                    <i class="fas fa-copy"></i> کپی
+                                </button>
+                            </div>
+                            <span class="form-text">این شماره برای پیگیری درخواست استفاده می‌شود</span>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-secondary" disabled>
+                            <i class="fas fa-arrow-right"></i> قبلی
+                        </button>
+                        <button type="button" class="btn btn-primary next-step" data-next="2">
+                            مرحله بعد <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- مرحله ۲: تجهیزات و محل -->
+                <div class="step-content" id="step-2">
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-industry"></i> انتخاب تجهیز</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="required">*</span> جستجو و انتخاب تجهیز
+                            </label>
+                            <select id="equipmentSelect" class="form-control" style="width: 100%;">
+                                <option value="">جستجوی تجهیز...</option>
+                            </select>
+                            <span class="form-text">نام تجهیز، کد یا محل را تایپ کنید</span>
+                        </div>
+                        
+                        <!-- کارت نمایش تجهیز انتخاب شده (مخفی در ابتدا) -->
+                        <div id="selectedEquipmentCard" class="equipment-card" style="display: none; margin-top: 20px;">
+                            <!-- محتوا با جاوااسکریپت پر می‌شود -->
+                        </div>
+                        
+                        <div class="form-group" id="manualEquipmentSection" style="display: none;">
+                            <label class="form-label">یا وارد کردن دستی اطلاعات تجهیز</label>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <input type="text" id="manualEquipmentName" class="form-control" 
+                                            placeholder="نام تجهیز">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="manualEquipmentLocation" class="form-control" 
+                                            placeholder="محل استقرار">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="toggleManualEntry" class="btn btn-outline" style="margin-top: 10px;">
+                            <i class="fas fa-edit"></i> وارد کردن دستی اطلاعات
+                        </button>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-map-marker-alt"></i> اطلاعات محل</h2>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="required">*</span> ساختمان
+                                </label>
+                                <select id="building" name="building" class="form-control" required>
+                                    <option value="">انتخاب ساختمان</option>
+                                    <option value="building-a">ساختمان A (تولید اتوبوس)</option>
+                                    <option value="building-b">ساختمان B (تولید سواری و کامیونت)</option>
+                                    <option value="building-c">ساختمان C (سالن PDI)</option>
+                                    <option value="building-d">ساختمان D (اداری)</option>
+                                    <option value="building-d">ساختمان E (تاسیسات)</option>
+                                    <option value="building-d">ساختمان F (غذاخوری)</option>
+                                    <option value="building-d">ساختمان G (انتظامات)</option>
+                                    <option value="building-d">ساختمان H (انبار مرکزی)</option>
+                                    <option value="building-d">ساختمان K (انبار قطعات برق و تزئینات)</option>
+                                    <option value="building-d">ساختمان L (انبار قطعات فلزی)</option>
+                                    <option value="building-d">ساختمان M (محوطه)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="required">*</span> طبقه
+                                </label>
+                                <select id="floor" name="floor" class="form-control" required>
+                                    <option value="">انتخاب طبقه</option>
+                                    <option value="ground">همکف</option>
+                                    <option value="first">اول</option>
+                                    <option value="second">دوم</option>
+                                    <option value="third">سوم</option>
+                                    <option value="basement">زیرزمین</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="required">*</span> بخش
+                                </label>
+                                <input type="text" id="section" name="section" class="form-control" 
+                                        placeholder="مثال: خط تولید ۱، ایستگاه ۳" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">نقشه موقعیت</label>
+                            <div class="attachment-area" id="mapUploadArea">
+                                <i class="fas fa-map"></i>
+                                <p>برای آپلود نقشه موقعیت کلیک کنید</p>
+                                <small>فرمت‌های مجاز: JPG, PNG, PDF (حداکثر ۵MB)</small>
+                                <input type="file" id="mapFile" name="map_file" accept="image/*,.pdf" class="hidden">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-secondary prev-step" data-prev="1">
+                            <i class="fas fa-arrow-right"></i> مرحله قبل
+                        </button>
+                        <button type="button" class="btn btn-primary next-step" data-next="3">
+                            مرحله بعد <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- مرحله ۳: جزئیات درخواست -->
+                <div class="step-content" id="step-3">
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-clipboard-list"></i> نوع و اولویت درخواست</h2>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="required">*</span> نوع درخواست
+                                </label>
+                                <select id="requestType" name="requestType" class="form-control" required>
+                                    <option value="">انتخاب نوع</option>
+                                    <option value="repair">تعمیر</option>
+                                    <option value="emergency">تعمیر اضطراری</option>
+                                    <option value="preventive">تعمیرات پیشگیرانه</option>
+                                    <option value="inspection">بازرسی</option>
+                                    <option value="calibration">کالیبراسیون</option>
+                                    <option value="installation">نصب</option>
+                                    <option value="modification">اصلاح و تغییر</option>
+                                    <option value="cleaning">نظافت و سرویس</option>
+                                    <option value="consultation">مشاوره فنی</option>
+                                    <option value="other">سایر</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="required">*</span> سطح اولویت
+                                </label>
+                                <div class="form-radio-group">
+                                    <div class="form-radio">
+                                        <input type="radio" id="priority-low" name="priority" value="low" required>
+                                        <label for="priority-low">
+                                            <span class="priority-badge priority-low">کم</span>
+                                            <span class="form-text">تا ۷ روز کاری</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-radio">
+                                        <input type="radio" id="priority-medium" name="priority" value="medium" required>
+                                        <label for="priority-medium">
+                                            <span class="priority-badge priority-medium">متوسط</span>
+                                            <span class="form-text">تا ۳ روز کاری</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-radio">
+                                        <input type="radio" id="priority-high" name="priority" value="high" required>
+                                        <label for="priority-high">
+                                            <span class="priority-badge priority-high">بالا</span>
+                                            <span class="form-text">۲۴ ساعته</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-radio">
+                                        <input type="radio" id="priority-critical" name="priority" value="critical" required>
+                                        <label for="priority-critical">
+                                            <span class="priority-badge priority-critical">بحرانی</span>
+                                            <span class="form-text">فوری (توقف تولید)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-exclamation-circle"></i> شرح مشکل / درخواست</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="required">*</span> عنوان درخواست
+                            </label>
+                            <input type="text" id="requestTitle" name="requestTitle" class="form-control" 
+                                    placeholder="شرح مختصر مشکل یا درخواست" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="required">*</span> شرح کامل
+                            </label>
+                            <textarea id="problemDescription" name="problemDescription" class="form-control" rows="5" 
+                                        placeholder="شرح کامل مشکل، علائم مشاهده شده، زمان وقوع، تأثیر بر فرآیند و ..." required></textarea>
+                            <span class="form-text">حداقل ۵۰ کاراکتر</span>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">تاریخ وقوع</label>
+                                <input type="text" id="occurrenceDate" name="occurrenceDate" class="form-control date-picker" 
+                                        placeholder="انتخاب تاریخ">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">زمان وقوع</label>
+                                <input type="time" id="occurrenceTime" name="occurrenceTime" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">تکرارپذیری</label>
+                                <select id="recurrence" name="recurrence" class="form-control">
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="once">یک بار</option>
+                                    <option value="occasional">گاه‌به‌گاه</option>
+                                    <option value="frequent">مکرر</option>
+                                    <option value="continuous">مداوم</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-chart-line"></i> تأثیر و پیامدها</h2>
+                        
+                        <div class="safety-alert warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>
+                                <h4 style="margin: 0 0 10px 0; color: #856404;">توجه به ایمنی</h4>
+                                <p style="margin: 0;">در صورت وجود خطر ایمنی فوری، لطفاً بخش تعمیرات را مستقیماً مطلع نمایید.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">سطح تأثیر بر تولید</label>
+                                <select id="productionImpact" name="productionImpact" class="form-control">
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="none">بدون تأثیر</option>
+                                    <option value="low">کاهش سرعت</option>
+                                    <option value="medium">توقف جزئی</option>
+                                    <option value="high">توقف کامل خط</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">تأثیر بر کیفیت</label>
+                                <select id="qualityImpact" name="qualityImpact" class="form-control">
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="none">بدون تأثیر</option>
+                                    <option value="low">کاهش جزئی کیفیت</option>
+                                    <option value="medium">نیاز به بازرسی مجدد</option>
+                                    <option value="high">تولید ضایعات</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">خطر ایمنی</label>
+                                <select id="safetyRisk" name="safetyRisk" class="form-control">
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="none">بدون خطر</option>
+                                    <option value="low">کم</option>
+                                    <option value="medium">متوسط</option>
+                                    <option value="high">زیاد</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">برآورد زمان توقف (ساعت)</label>
+                            <input type="number" id="estimatedDowntime" name="estimatedDowntime" class="form-control" 
+                                    min="0" step="0.5" placeholder="0">
+                            <span class="form-text">براساس تجربیات قبلی یا تخمین فنی</span>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-secondary prev-step" data-prev="2">
+                            <i class="fas fa-arrow-right"></i> مرحله قبل
+                        </button>
+                        <button type="button" class="btn btn-primary next-step" data-next="4">
+                            مرحله بعد <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- مرحله ۴: پیوست‌ها و تأیید -->
+                <div class="step-content" id="step-4">
+                    <div class="work-request-summary">
+                        <h3 style="margin-bottom: 20px; color: var(--form-primary);">
+                            <i class="fas fa-file-alt"></i> خلاصه درخواست
+                        </h3>
+                        <div class="summary-grid" id="requestSummary">
+                            <!-- اطلاعات به صورت دینامیک نمایش داده می‌شود -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-paperclip"></i> پیوست‌ها و مستندات</h2>
+                        
+                        <div class="attachment-area" id="attachmentArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>برای آپلود فایل کلیک کنید یا فایل را اینجا بکشید</p>
+                            <small>فرمت‌های مجاز: JPG, PNG, PDF, DOC, DOCX (حداکثر ۱۰MB در مجموع)</small>
+                            <input type="file" id="fileUpload" name="attachments[]" multiple class="hidden"
+                                    accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+                        </div>
+                        
+                        <div class="attachment-list" id="attachmentList">
+                            <!-- فایل‌های آپلود شده اینجا نمایش داده می‌شوند -->
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">توضیحات اضافی</label>
+                            <textarea id="additionalNotes" name="additionalNotes" class="form-control" rows="3" 
+                                        placeholder="هر گونه توضیح اضافی یا نکات خاص..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h2 class="form-section-title"><i class="fas fa-user-check"></i> تأیید و ارسال</h2>
+                        
+                        <div class="form-group">
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="confirmAccuracy" name="confirmAccuracy" required>
+                                <label for="confirmAccuracy">
+                                    تأیید می‌کنم که اطلاعات وارد شده صحیح و کامل می‌باشد
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="confirmSafety" name="confirmSafety" required>
+                                <label for="confirmSafety">
+                                    کلیه نکات ایمنی رعایت شده و در صورت نیاز اقدامات لازم انجام شده است
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="notifySupervisor" name="notifySupervisor"> 
+                                <label for="notifySupervisor">
+                                    اطلاع‌رسانی به سرپرست بخش
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">نحوه اطلاع‌رسانی</label>
+                            <div class="form-radio-group">
+                                <div class="form-radio">
+                                    <input type="radio" id="notify-normal" name="notification" value="normal" checked>
+                                    <label for="notify-normal">اطلاع‌رسانی معمولی</label>
+                                </div>
+                                <div class="form-radio">
+                                    <input type="radio" id="notify-urgent" name="notification" value="urgent">
+                                    <label for="notify-urgent">اطلاع‌رسانی فوری</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden">
+                        <input type="hidden" id="equipmentNameField" name="equipmentName" value="">
+                        <input type="hidden" id="equipmentIdField" name="equipmentId" value="">
+                        <input type="hidden" id="requestNumberField" name="requestNumber" value="">
+                        <input type="hidden" id="requesterNameField" name="requesterName" value="">
+                    </div>
+                    <!-- دکمه‌های ارسال (بخش form-actions) -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary prev-step" data-prev="3">
+                            <i class="fas fa-arrow-right"></i> مرحله قبل
+                        </button>
+                        <div style="display: flex; gap: 15px;">
+                            <button type="button" class="btn btn-secondary" id="saveDraft">
+                                <i class="fas fa-save"></i> ذخیره پیش‌نویس
+                            </button>
+                            <button type="submit" class="btn btn-success" id="submitForm">
+                                <i class="fas fa-paper-plane"></i> ارسال درخواست
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- عنوان در هدر صفحه -->
+    <meta name="page-title" content="فرم درخواست کار">
+
+
+
+
+
+
+
+
+
+
+
+    <!-- اسکریپت‌ها -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fa.js"></script>
+
+    <script src="../js/main.js"></script>
+
+    <!-- اسکریپت هدر -->
+    <script src="../components/pages-header/header.js"></script>
+    <!-- اسکریپت فوتر 
+    <script src="../components/pages-footer/footer.js"></script> -->  
+
+
+    <!-- اسکریپت بارگذاری منوی کناری یا سایدبار-->
+    <script>
+        // 1. اجرای فوری: قبل از هر چیزی چک کن آیا پین است؟
+        // اگر بله، کلاس را به بادی اضافه کن تا CSS فوراً اعمال شود
+        (function() {
+            const isPinned = localStorage.getItem('sidebarPinned') === 'true';
+            if (isPinned) {
+                document.body.classList.add('sidebar-pinned');
+            }
+        })();
+
+        // تابع تزریق HTML
+        function injectSidebarHTML(html) {
+            const container = document.getElementById('sidebar-container');
+            if (container.querySelector('.sidebar')) return;
+
+            container.innerHTML = html;
+            executeSidebarScript();
+        }
+
+        function loadSidebar() {
+            // 2. تلاش برای خواندن از کش (سرعت بالا)
+            const cachedHTML = localStorage.getItem('sidebarHTML_Cache');
+            if (cachedHTML) {
+                injectSidebarHTML(cachedHTML);
+            }
+
+            // 3. دانلود در پس‌زمینه برای آپدیت
+            fetch('../sidebar/sidebar.html?v=' + Date.now())
+                .then(response => response.text())
+                .then(html => {
+                    // اگر کش نبود، الان نمایش بده
+                    if (!cachedHTML) {
+                        injectSidebarHTML(html);
+                    }
+                    // آپدیت کش
+                    if (html !== cachedHTML) {
+                        localStorage.setItem('sidebarHTML_Cache', html);
+                    }
+                })
+                .catch(console.error);
+        }
+        
+        function executeSidebarScript() {
+            const existingScript = document.querySelector('script[src*="../sidebar/sidebar.js"]');
+            if (existingScript) existingScript.remove();
+            
+            const script = document.createElement('script');
+            script.src = '../sidebar/sidebar.js?v=' + Date.now();
+            script.async = false;
+            document.body.appendChild(script);
+        }
+        
+        // اجرا
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadSidebar);
+        } else {
+            loadSidebar();
+        }
+    </script>
+  
+    <!-- اسکریپت‌های اختصاصی صفحه درخواست کار -->
+    <script>
+    // ================ اضافه کردن استایل انیمیشن ================
+    if (!document.querySelector('#mapFileAnimations')) {
+        const style = document.createElement('style');
+        style.id = 'mapFileAnimations';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    // ================ پایان اضافه کردن استایل ================       
+
+document.addEventListener('DOMContentLoaded', function() {
+    // مقداردهی اولیه
+    const form = document.getElementById('workRequestForm');
+    const steps = document.querySelectorAll('.step');
+    const stepContents = document.querySelectorAll('.step-content');
+    let currentStep = 1;
+    let uploadedFiles = [];      // فایل‌های پیوست گام ۴
+    let mapFile = null;         // فایل نقشه گام ۲
+    let selectedEquipment = null;
+
+    // === FIX: Event Delegation برای مدیریت مراحل ===
+    document.addEventListener('click', function(e) {
+        // برای دکمه‌های مرحله بعد
+        if (e.target.matches('.next-step, .next-step *')) {
+            e.preventDefault();
+            const button = e.target.closest('.next-step');
+            if (button && button.dataset.next) {
+                const nextStep = parseInt(button.dataset.next);
+                if (validateStep(currentStep)) {
+                    showStep(nextStep);
+                }
+            }
+        }
+        
+        // برای دکمه‌های مرحله قبل
+        if (e.target.matches('.prev-step, .prev-step *')) {
+            e.preventDefault();
+            const button = e.target.closest('.prev-step');
+            if (button && button.dataset.prev) {
+                const prevStep = parseInt(button.dataset.prev);
+                showStep(prevStep);
+            }
+        }
+    });
+
+// ==================== مدیریت انتخاب تجهیز با Select2 ====================
+
+let equipmentSelectInitialized = false;
+let allEquipment = []; // ذخیره تمام تجهیزات برای جستجوی سریع‌تر
+
+// تابع بارگذاری تجهیزات برای Select2
+async function initializeEquipmentSelect() {
+    if (equipmentSelectInitialized) return;
+    
+    const $select = $('#equipmentSelect');
+    
+    try {
+        // تنظیمات پیشرفته Select2 با قابلیت جستجو
+        $select.select2({
+            placeholder: 'نام تجهیز، کد یا محل را وارد کنید...',
+            allowClear: true,
+            width: '100%',
+            dir: 'rtl',
+            minimumResultsForSearch: 0, // این گزینه باعث می‌شود باکس جستجو همیشه نمایش داده شود
+            minimumInputLength: 0, // جستجو از همان ابتدا فعال است
+            language: {
+                inputTooShort: function() { return "لطفاً حداقل {number} کاراکتر وارد کنید"; },
+                inputTooLong: function() { return "لطفاً {number} کاراکتر حذف کنید"; },
+                errorLoading: function() { return "خطا در بارگذاری نتایج"; },
+                loadingMore: function() { return "در حال بارگذاری نتایج بیشتر..."; },
+                maximumSelected: function() { return "شما تنها می‌توانید {number} آیتم انتخاب کنید"; },
+                noResults: function() { return "نتیجه‌ای یافت نشد"; },
+                searching: function() { return "در حال جستجو..."; },
+                removeAllItems: function() { return "حذف همه موارد"; },
+                removeItem: function() { return "حذف"; },
+                search: function() { return "جستجو"; }
+            },
+            escapeMarkup: function(markup) { return markup; },
+            templateResult: formatEquipmentOption,
+            templateSelection: formatEquipmentSelection,
+            matcher: function(params, data) {
+                // اگر پارامتر جستجو خالی باشد، همه موارد را نشان بده
+                if ($.trim(params.term) === '') {
+                    return data;
+                }
+                
+                // جستجو در متن و داده‌های اضافی
+                const searchTerm = params.term.toLowerCase();
+                const equipment = $(data.element).data('equipment');
+                
+                if (equipment) {
+                    // جستجو در نام، کد، محل، نوع و مدل
+                    const searchableText = [
+                        equipment.name,
+                        equipment.code,
+                        equipment.location,
+                        equipment.type,
+                        equipment.model,
+                        equipment.serial_number
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    
+                    if (searchableText.includes(searchTerm)) {
+                        return data;
+                    }
+                    
+                    // جستجوی فازی ساده (تطبیق جزئی)
+                    const words = searchTerm.split(' ');
+                    const matchesAllWords = words.every(word => 
+                        searchableText.includes(word) || 
+                        (equipment.name && equipment.name.toLowerCase().includes(word)) ||
+                        (equipment.code && equipment.code.toLowerCase().includes(word)) ||
+                        (equipment.location && equipment.location.toLowerCase().includes(word))
+                    );
+                    
+                    if (matchesAllWords) {
+                        return data;
+                    }
+                    
+                    return null;
+                }
+                
+                // اگر داده‌ای نبود، جستجوی معمولی انجام بده
+                if (data.text.toLowerCase().includes(searchTerm)) {
+                    return data;
+                }
+                
+                return null;
+            },
+            sorter: function(data) {
+                // مرتب‌سازی نتایج بر اساس بحرانی بودن
+                return data.sort(function(a, b) {
+                    const equipmentA = $(a.element).data('equipment');
+                    const equipmentB = $(b.element).data('equipment');
+                    
+                    if (!equipmentA || !equipmentB) return 0;
+                    
+                    // اولویت بر اساس بحرانی بودن (بحرانی اول)
+                    const criticalityOrder = { 'critical': 0, 'high': 1, 'medium': 2, 'low': 3 };
+                    const orderA = criticalityOrder[equipmentA.criticality] || 4;
+                    const orderB = criticalityOrder[equipmentB.criticality] || 4;
+                    
+                    if (orderA !== orderB) {
+                        return orderA - orderB;
+                    }
+                    
+                    // سپس بر اساس نام
+                    return (equipmentA.name || '').localeCompare(equipmentB.name || '', 'fa');
+                });
+            }
+        });
+        
+        // نمایش پیام بارگذاری
+        $select.select2('open'); // باز کردن dropdown برای نشان دادن پیام بارگذاری
+        
+        // بارگذاری تجهیزات از سرور
+        const url = '../api/get-equipments.php';
+        console.log('📡 بارگذاری تجهیزات برای Select2...');
+        
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            allEquipment = result.data;
+            
+            // پاک کردن گزینه‌های قبلی
+            $select.empty().append('<option value=""></option>');
+            
+            // اضافه کردن تجهیزات به Select2
+            allEquipment.forEach(equipment => {
+                const displayText = `${equipment.name} (${equipment.code}) - ${equipment.location}`;
+                const option = new Option(displayText, equipment.id, false, false);
+                $(option).data('equipment', equipment);
+                $select.append(option);
+            });
+            
+            // بروزرسانی placeholder
+            $select.select2({
+                placeholder: 'نام تجهیز، کد یا محل را وارد کنید...'
+            });
+            
+            console.log(`✅ ${allEquipment.length} تجهیز بارگذاری شد`);
+            
+            // بستن dropdown بعد از بارگذاری
+            $select.select2('close');
+            
+        } else {
+            console.error('❌ خطا در بارگذاری تجهیزات:', result.message);
+            showToast('خطا در بارگذاری لیست تجهیزات', 'error');
+            
+            // استفاده از داده‌های نمونه
+            loadSampleEquipment($select);
+        }
+        
+    } catch (error) {
+        console.error('❌ خطا در بارگذاری تجهیزات:', error);
+        showToast('خطا در بارگذاری لیست تجهیزات', 'error');
+        
+        // استفاده از داده‌های نمونه
+        loadSampleEquipment($select);
+    }
+    
+    equipmentSelectInitialized = true;
+}
+
+// تابع بارگذاری داده‌های نمونه
+function loadSampleEquipment($select) {
+    allEquipment = [
+        { id: 1, code: 'MIX-101', name: 'میکسر صنعتی', type: 'تجهیز تولید', model: 'MixPro-5000', serial_number: 'SN-MIX-101', location: 'سالن تولید A - خط ۱', criticality: 'critical', status: 'active', last_maintenance_date: '1402/12/15', next_maintenance_date: '1403/03/15' },
+        { id: 2, code: 'CMP-202', name: 'کمپرسور هوا', type: 'تاسیسات', model: 'AirComp-2000', serial_number: 'SN-CMP-202', location: 'موتورخانه مرکزی', criticality: 'high', status: 'active', last_maintenance_date: '1402/11/20', next_maintenance_date: '1403/02/20' },
+        { id: 3, code: 'CNV-303', name: 'نوار نقاله', type: 'تجهیز خط تولید', model: 'Convey-300', serial_number: 'SN-CNV-303', location: 'سالن تولید B - خط بسته‌بندی', criticality: 'medium', status: 'maintenance', last_maintenance_date: '1402/10/05', next_maintenance_date: '1403/01/05' },
+        { id: 4, code: 'PLC-404', name: 'کنترلر PLC', type: 'سیستم کنترل', model: 'Siemens S7-1200', serial_number: 'SN-PLC-404', location: 'تابلوی برق اصلی', criticality: 'critical', status: 'active', last_maintenance_date: '1402/09/10', next_maintenance_date: '1403/03/10' },
+        { id: 5, code: 'PMP-505', name: 'پمپ آب', type: 'تاسیسات', model: 'Grundfos', serial_number: 'SN-PMP-505', location: 'ایستگاه پمپاژ', criticality: 'medium', status: 'active', last_maintenance_date: '1402/08/25', next_maintenance_date: '1403/02/25' },
+        { id: 6, code: 'FAN-606', name: 'هواکش صنعتی', type: 'تهویه', model: 'Vent-1000', serial_number: 'SN-FAN-606', location: 'سقف سالن تولید', criticality: 'low', status: 'inactive', last_maintenance_date: '1402/07/30', next_maintenance_date: '1403/01/30' },
+        { id: 7, code: 'BOI-707', name: 'دیگ بخار', type: 'تاسیسات حرارتی', model: 'SteamGen-500', serial_number: 'SN-BOI-707', location: 'موتورخانه', criticality: 'critical', status: 'active', last_maintenance_date: '1402/06/15', next_maintenance_date: '1403/06/15' },
+        { id: 8, code: 'ELE-808', name: 'تابلوی برق', type: 'الکتریکال', model: 'Panel-400', serial_number: 'SN-ELE-808', location: 'اتاق برق', criticality: 'high', status: 'active', last_maintenance_date: '1402/05/20', next_maintenance_date: '1403/05/20' }
+    ];
+    
+    $select.empty().append('<option value=""></option>');
+    allEquipment.forEach(equipment => {
+        const displayText = `${equipment.name} (${equipment.code}) - ${equipment.location}`;
+        const option = new Option(displayText, equipment.id, false, false);
+        $(option).data('equipment', equipment);
+        $select.append(option);
+    });
+    
+    $select.select2({
+        placeholder: 'نام تجهیز، کد یا محل را وارد کنید...'
+    });
+}
+
+// فرمت نمایش گزینه‌ها در dropdown
+function formatEquipmentOption(option) {
+    if (!option.id) return option.text;
+    
+    const $option = $(option.element);
+    const equipment = $option.data('equipment');
+    
+    if (!equipment) return option.text;
+    
+    // تعیین رنگ و آیکون بر اساس بحرانی بودن
+    let criticalityColor = '#27ae60'; // کم
+    let criticalityIcon = 'fa-thermometer-half';
+    if (equipment.criticality === 'high') { 
+        criticalityColor = '#e67e22';
+        criticalityIcon = 'fa-exclamation-triangle';
+    }
+    if (equipment.criticality === 'critical') { 
+        criticalityColor = '#e74c3c';
+        criticalityIcon = 'fa-bolt';
+    }
+    
+    // تعیین آیکون وضعیت
+    let statusIcon = 'fa-check-circle';
+    let statusColor = '#27ae60';
+    if (equipment.status === 'inactive') {
+        statusIcon = 'fa-times-circle';
+        statusColor = '#95a5a6';
+    } else if (equipment.status === 'maintenance') {
+        statusIcon = 'fa-tools';
+        statusColor = '#f39c12';
+    } else if (equipment.status === 'out_of_service') {
+        statusIcon = 'fa-ban';
+        statusColor = '#e74c3c';
+    }
+    
+    const $container = $(
+        `<div style="display: flex; align-items: center; padding: 8px; direction: rtl; border-bottom: 1px solid #ecf0f1;">
+            <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                    <span style="font-weight: 700; color: #2c3e50;">${equipment.name}</span>
+                    <span style="background-color: #ecf0f1; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: #7f8c8d;">${equipment.code}</span>
+                </div>
+                <div style="display: flex; gap: 15px; font-size: 0.85rem; color: #7f8c8d; margin-bottom: 4px;">
+                    <span><i class="fas fa-map-marker-alt" style="margin-left: 4px; color: #3498db;"></i>${equipment.location}</span>
+                    <span><i class="fas fa-cube" style="margin-left: 4px; color: #9b59b6;"></i>${equipment.type || 'نامشخص'}</span>
+                    <span><i class="fas fa-microchip" style="margin-left: 4px; color: #e67e22;"></i>${equipment.model || 'نامشخص'}</span>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px; margin-right: 15px;">
+                <span style="display: flex; align-items: center; gap: 5px;">
+                    <i class="fas ${statusIcon}" style="color: ${statusColor};"></i>
+                    <span style="font-size: 0.8rem;">${getStatusText(equipment.status)}</span>
+                </span>
+                <span style="display: flex; align-items: center; gap: 5px;">
+                    <i class="fas ${criticalityIcon}" style="color: ${criticalityColor};"></i>
+                    <span style="font-size: 0.8rem; color: ${criticalityColor};">${getCriticalityText(equipment.criticality)}</span>
+                </span>
+            </div>
+        </div>`
+    );
+    
+    return $container;
+}
+
+// فرمت نمایش گزینه انتخاب شده
+function formatEquipmentSelection(option) {
+    if (!option.id) return option.text;
+    
+    const $option = $(option.element);
+    const equipment = $option.data('equipment');
+    
+    if (!equipment) return option.text;
+    
+    return `${equipment.name} (${equipment.code})`;
+}
+
+// دریافت متن بحرانی
+function getCriticalityText(criticality) {
+    switch(criticality) {
+        case 'critical': return 'بحرانی';
+        case 'high': return 'بالا';
+        case 'medium': return 'متوسط';
+        case 'low': return 'کم';
+        default: return 'نامشخص';
+    }
+}
+
+// دریافت متن وضعیت
+function getStatusText(status) {
+    switch(status) {
+        case 'active': return 'فعال';
+        case 'inactive': return 'غیرفعال';
+        case 'maintenance': return 'در تعمیر';
+        case 'out_of_service': return 'خارج سرویس';
+        default: return 'نامشخص';
+    }
+}
+
+// تابع نمایش کارت تجهیز انتخاب شده
+function showEquipmentCard(equipment) {
+    const cardContainer = document.getElementById('selectedEquipmentCard');
+    if (!cardContainer) return;
+    
+    // تعیین کلاس بحرانی
+    let criticalityClass = 'impact-low';
+    let criticalityText = 'کم';
+    
+    switch(equipment.criticality) {
+        case 'critical':
+            criticalityClass = 'impact-high';
+            criticalityText = 'بحرانی';
+            break;
+        case 'high':
+            criticalityClass = 'impact-medium';
+            criticalityText = 'بالا';
+            break;
+        case 'medium':
+            criticalityClass = 'impact-medium';
+            criticalityText = 'متوسط';
+            break;
+    }
+    
+    // متن وضعیت
+    let statusText = 'فعال';
+    let statusClass = '';
+    switch(equipment.status) {
+        case 'inactive': 
+            statusText = 'غیرفعال';
+            statusClass = 'priority-low';
+            break;
+        case 'maintenance': 
+            statusText = 'در تعمیر';
+            statusClass = 'priority-medium';
+            break;
+        case 'out_of_service': 
+            statusText = 'خارج سرویس';
+            statusClass = 'priority-critical';
+            break;
+    }
+    
+    // ساخت کارت با نمایش عنوان و مقدار در کنار هم - نسخه Flexbox
+    cardContainer.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div>
+                <h4 style="margin: 0 0 5px 0; color: var(--form-primary);">${equipment.name}
+                <span style="background-color: #ecf0f1; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: #7f8c8d; margin-right: 25px;">${equipment.code}</span></h4>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <span class="priority-badge ${statusClass}">${statusText}</span>
+                <span class="impact-level ${criticalityClass}">${criticalityText}</span>
+            </div>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                <div style="flex: 1 1 200px;">
+                    <div style="display: flex; align-items: baseline; margin-bottom: 10px;">
+                        <span class="detail-label" style="min-width: 100px;"><i class="fas fa-map-marker-alt" style="margin-left: 5px;"></i>محل استقرار:</span>
+                        <span class="detail-value" style="margin-right: 10px;">${equipment.location}</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; margin-bottom: 10px;">
+                        <span class="detail-label" style="min-width: 100px;"><i class="fas fa-cube" style="margin-left: 5px;"></i>نوع تجهیز:</span>
+                        <span class="detail-value" style="margin-right: 10px;">${equipment.type || 'نامشخص'}</span>
+                    </div>
+                </div>
+                <div style="flex: 1 1 200px;">
+                    <div style="display: flex; align-items: baseline; margin-bottom: 10px;">
+                        <span class="detail-label" style="min-width: 100px;"><i class="fas fa-microchip" style="margin-left: 5px;"></i>مدل:</span>
+                        <span class="detail-value" style="margin-right: 10px;">${equipment.model || 'نامشخص'}</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; margin-bottom: 10px;">
+                        <span class="detail-label" style="min-width: 100px;"><i class="fas fa-barcode" style="margin-left: 5px;"></i>شماره سریال:</span>
+                        <span class="detail-value" style="margin-right: 10px;">${equipment.serial_number || 'نامشخص'}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background-color: #fff; padding: 15px; border-radius: 8px; border: 1px solid var(--form-border);">
+            <div style="display: flex; flex-wrap: wrap; gap: 150px;">
+                <div style="display: flex; align-items: baseline;">
+                    <span class="detail-label" style="min-width: 90px;">آخرین تعمیر:</span>
+                    <span class="detail-value" style="margin-right: 10px;">${equipment.last_maintenance_date || 'ندارد'}</span>
+                </div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="detail-label" style="min-width: 90px;">تعمیر بعدی:</span>
+                    <span class="detail-value" style="margin-right: 10px;">${equipment.next_maintenance_date || 'نامشخص'}</span>
+                </div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="detail-label" style="min-width: 90px;">وضعیت گارانتی:</span>
+                    <span class="detail-value" style="margin-right: 10px;">${equipment.warranty_status || 'نامشخص'}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    cardContainer.style.display = 'block';
+    cardContainer.classList.add('selected');
+    
+    // پر کردن فیلد محل
+    const sectionField = document.getElementById('section');
+    if (sectionField && equipment.location) {
+        sectionField.value = equipment.location;
+    }
+    
+    // ذخیره تجهیز انتخاب شده
+    selectedEquipment = equipment;
+    
+    // بروزرسانی فیلدهای مخفی
+    updateHiddenFields();
+}
+
+
+// رویداد تغییر Select2
+$('#equipmentSelect').on('change', function() {
+
+    const selectedId = $(this).val();
+    
+    if (selectedId) {
+        // پیدا کردن تجهیز انتخاب شده
+        const selectedOption = $(this).find('option:selected');
+        const equipment = selectedOption.data('equipment');
+        
+        if (equipment) {
+            showEquipmentCard(equipment);
+            
+            // نمایش پیام موفقیت
+            showToast(`تجهیز "${equipment.name}" انتخاب شد`, 'success');
+        }
+    } else {
+        // مخفی کردن کارت اگر هیچ گزینه‌ای انتخاب نشده
+        document.getElementById('selectedEquipmentCard').style.display = 'none';
+        selectedEquipment = null;
+        updateHiddenFields();
+    }
+});
+
+// باز کردن dropdown هنگام کلیک روی فیلد جستجو
+$('#equipmentSelect').on('select2:open', function() {
+    // فوکوس روی باکس جستجو
+    setTimeout(function() {
+        const searchField = document.querySelector('.select2-search__field');
+        if (searchField) {
+            searchField.focus();
+        } else {
+            console.log('⚠️ فیلد جستجو هنوز ایجاد نشده، تلاش مجدد...');
+            // تلاش مجدد بعد از 200 میلی‌ثانیه
+            setTimeout(() => {
+                const retrySearchField = document.querySelector('.select2-search__field');
+                if (retrySearchField) retrySearchField.focus();
+            }, 200);
+        }
+    }, 100);
+});
+
+// راه‌اندازی Select2 بعد از بارگذاری صفحه
+setTimeout(() => {
+    if (typeof $ !== 'undefined' && $.fn.select2) {
+        initializeEquipmentSelect();
+    } else {
+        // اگر jQuery یا Select2 هنوز لود نشده، منتظر بمان
+        const checkInterval = setInterval(() => {
+            if (typeof $ !== 'undefined' && $.fn.select2) {
+                clearInterval(checkInterval);
+                initializeEquipmentSelect();
+            }
+        }, 100);
+        
+        // Timeout بعد از 5 ثانیه
+        setTimeout(() => clearInterval(checkInterval), 5000);
+    }
+}, 500);
+
+// ==================== پایان بخش Select2 ====================
+// حذف کدهای قبلی مربوط به equipmentList و جستجوی قدیمی
+// (تابع loadEquipmentList قبلی را کامنت یا حذف کنید)
+
+
+
+
+
+
+
+
+
+
+// مدیریت ورود دستی تجهیز
+document.getElementById('toggleManualEntry').addEventListener('click', function() {
+    const manualSection = document.getElementById('manualEquipmentSection');
+    const equipmentSelect = document.getElementById('equipmentSelect');
+    const selectedCard = document.getElementById('selectedEquipmentCard');
+    
+    if (manualSection.style.display === 'none') {
+        manualSection.style.display = 'block';
+        equipmentSelect.style.display = 'none';
+        selectedCard.style.display = 'none';
+        this.innerHTML = '<i class="fas fa-list"></i> نمایش لیست تجهیزات';
+        
+        // غیرفعال کردن Select2
+        $(equipmentSelect).select2('destroy');
+        equipmentSelect.style.width = '100%';
+    } else {
+        manualSection.style.display = 'none';
+        equipmentSelect.style.display = 'block';
+        selectedCard.style.display = 'none';
+        this.innerHTML = '<i class="fas fa-edit"></i> وارد کردن دستی اطلاعات';
+        
+        // راه‌اندازی مجدد Select2
+        $(equipmentSelect).select2({
+            placeholder: 'نام تجهیز، کد یا محل را وارد کنید...',
+            allowClear: true,
+            width: '100%',
+            dir: 'rtl'
+        });
+    }
+});
+
+    // مدیریت آپلود فایل نقشه (گام ۲)
+const mapUploadArea = document.getElementById('mapUploadArea');
+const mapFileInput = document.getElementById('mapFile');
+
+// حذف پیام موفقیت قبلی
+function removeMapSuccessMessage() {
+    const existingMessage = mapUploadArea.parentNode.querySelector('.upload-success-message');
+    if (existingMessage) existingMessage.remove();
+}
+
+mapUploadArea.addEventListener('click', () => mapFileInput.click());
+
+mapFileInput.addEventListener('change', function(e) {
+    if (this.files.length > 0) {
+        const file = this.files[0];
+        
+        // اعتبارسنجی حجم و نوع فایل
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('حجم فایل نقشه نباید بیشتر از ۵MB باشد', 'error');
+            this.value = '';
+            return;
+        }
+        
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+        if (!validTypes.includes(file.type)) {
+            showToast('فرمت فایل نقشه باید JPG، PNG یا PDF باشد', 'error');
+            this.value = '';
+            return;
+        }
+        
+        mapFile = file;
+        
+        // حذف پیام موفقیت قبلی
+        removeMapSuccessMessage();
+        
+        // نمایش مستقیم فایل (بدون پیام جداگانه)
+        renderMapFileInfo();
+        
+        // نمایش پیام toast به جای پیام درون صفحه
+        showToast('فایل نقشه با موفقیت آپلود شد', 'success');
+        
+        updateSummary();
+    }
+});
+
+// تابع بهبود یافته نمایش اطلاعات فایل نقشه
+function renderMapFileInfo() {
+    const mapContainer = document.getElementById('mapUploadArea').parentNode;
+    
+    // حذف اطلاعات قبلی
+    const existingInfo = mapContainer.querySelector('.map-file-info');
+    if (existingInfo) existingInfo.remove();
+    
+    // حذف پیام موفقیت (اگر وجود دارد)
+    removeMapSuccessMessage();
+    
+    if (mapFile) {
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'map-file-info';
+        infoDiv.style.cssText = `
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        `;
+        
+        // ایجاد دکمه حذف
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.innerHTML = '<i class="fas fa-times"></i>';
+        deleteButton.style.cssText = `
+            background: none;
+            border: none;
+            color: #f44336;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            margin-right: auto;
+        `;
+        deleteButton.onmouseover = () => deleteButton.style.backgroundColor = 'rgba(244, 67, 54, 0.1)';
+        deleteButton.onmouseout = () => deleteButton.style.backgroundColor = 'transparent';
+        
+        // تابع حذف کامل
+        deleteButton.onclick = function() {
+            infoDiv.remove();           // حذف المان فایل
+            mapFile = null;              // پاک کردن متغیر
+            document.getElementById('mapFile').value = '';  // پاک کردن input
+            removeMapSuccessMessage();   // حذف پیام موفقیت (اگر وجود داشته باشد)
+            updateSummary();             // به‌روزرسانی خلاصه
+            showToast('فایل نقشه حذف شد', 'info');
+        };
+        
+        // ساختار اطلاعات فایل
+        const fileInfo = document.createElement('div');
+        fileInfo.style.cssText = 'flex: 1; display: flex; align-items: center; gap: 10px;';
+        fileInfo.innerHTML = `
+            <i class="fas fa-check-circle" style="color: #2196f3; font-size: 1.2rem;"></i>
+            <div>
+                <div style="font-weight: 600;">${mapFile.name}</div>
+                <div style="font-size: 0.85rem; color: #1976d2;">${(mapFile.size / 1024).toFixed(1)} KB</div>
+            </div>
+        `;
+        
+        infoDiv.appendChild(fileInfo);
+        infoDiv.appendChild(deleteButton);
+        mapContainer.appendChild(infoDiv);
+    }
+}
+        
+
+    // مدیریت آپلود فایل‌های پیوست
+    const attachmentArea = document.getElementById('attachmentArea');
+    const fileUploadInput = document.getElementById('fileUpload');
+    const attachmentList = document.getElementById('attachmentList');
+    
+    attachmentArea.addEventListener('click', () => fileUploadInput.click());    
+
+    // پشتیبانی از Drag & Drop
+    attachmentArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        attachmentArea.style.borderColor = 'var(--form-secondary)';
+        attachmentArea.style.backgroundColor = '#e3f2fd';
+    });
+    
+    attachmentArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        attachmentArea.style.borderColor = 'var(--form-border)';
+        attachmentArea.style.backgroundColor = 'var(--form-light)';
+    });
+    
+    attachmentArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        attachmentArea.style.borderColor = 'var(--form-border)';
+        attachmentArea.style.backgroundColor = 'var(--form-light)';
+        
+        const files = Array.from(e.dataTransfer.files);
+        handleFileUpload(files);
+    });
+    
+    fileUploadInput.addEventListener('change', function(e) {
+        const files = Array.from(this.files);
+        handleFileUpload(files);
+    });
+
+function handleFileUpload(files) {
+    let totalSize = uploadedFiles.reduce((sum, file) => sum + file.size, 0);
+    
+    files.forEach(file => {
+        // بررسی تکراری نبودن فایل
+        const isDuplicate = uploadedFiles.some(f => f.name === file.name && f.size === file.size);
+        if (isDuplicate) {
+            showToast(`فایل "${file.name}" قبلاً اضافه شده است`, 'warning');
+            return;
+        }
+        
+        totalSize += file.size;
+        
+        if (totalSize > 10 * 1024 * 1024) {
+            showToast('حجم کل فایل‌ها بیش از ۱۰MB است', 'error');
+            return;
+        }
+        
+        const validTypes = [
+            'image/jpeg', 'image/png', 'image/jpg', 
+            'application/pdf', 
+            'application/msword', 
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+        
+        if (!validTypes.includes(file.type)) {
+            showToast(`فرمت فایل ${file.name} نامعتبر است`, 'error');
+            return;
+        }
+        
+        uploadedFiles.push(file);
+    });
+    
+    fileUploadInput.value = '';
+    renderAttachmentList();
+    updateSummary();
+}
+    
+function renderAttachmentList() {
+    attachmentList.innerHTML = '';
+    
+    if (uploadedFiles.length === 0) {
+        attachmentList.innerHTML = `
+            <div style="text-align: center; padding: 20px; color: #6c757d;">
+                <i class="fas fa-file-alt" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <p>فایلی پیوست نشده است</p>
+            </div>
+        `;
+        return;
+    }
+    
+    uploadedFiles.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'attachment-item';
+        
+        const fileIcon = getFileIcon(file.type);
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        
+        item.innerHTML = `
+            <div class="attachment-info">
+                <i class="fas ${fileIcon} attachment-icon"></i>
+                <div>
+                    <div style="font-weight: 600;">${file.name}</div>
+                    <div style="font-size: 0.85rem; color: #6c757d;">
+                        ${fileSize} MB | ${getFileType(file.type)}
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="attachment-remove" data-index="${index}">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        attachmentList.appendChild(item);
+    });
+
+    // اضافه کردن event listener برای دکمه‌های حذف
+    attachmentList.querySelectorAll('.attachment-remove').forEach(button => {
+        button.addEventListener('click', function() {
+            const index = parseInt(this.dataset.index);
+            uploadedFiles.splice(index, 1); // حذف از آرایه
+            renderAttachmentList(); // بازسازی لیست
+            updateSummary(); // به‌روزرسانی خلاصه
+            showToast('فایل حذف شد', 'info');
+        });
+    });
+}
+    
+    function getFileIcon(mimeType) {
+        if (mimeType.startsWith('image/')) return 'fa-image';
+        if (mimeType === 'application/pdf') return 'fa-file-pdf';
+        if (mimeType.includes('word')) return 'fa-file-word';
+        if (mimeType.includes('excel')) return 'fa-file-excel';
+        return 'fa-file';
+    }
+    
+    function getFileType(mimeType) {
+        if (mimeType.startsWith('image/')) return 'عکس';
+        if (mimeType === 'application/pdf') return 'PDF';
+        if (mimeType.includes('word')) return 'سند Word';
+        if (mimeType.includes('excel')) return 'فایل Excel';
+        return 'فایل';
+    }
+
+    // به‌روزرسانی خلاصه درخواست
+    function updateSummary() {
+        const summaryContainer = document.getElementById('requestSummary');
+        if (!summaryContainer) return;
+
+        // محاسبه تعداد کل فایل‌ها (نقشه + پیوست‌ها)
+        const totalFiles = (mapFile ? 1 : 0) + uploadedFiles.length;
+
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+        
+        const priorityLabels = {
+            'low': 'کم',
+            'medium': 'متوسط',
+            'high': 'بالا',
+            'critical': 'بحرانی'
+        };
+        
+        const requestTypeLabels = {
+            'repair': 'تعمیر',
+            'emergency': 'تعمیر اضطراری',
+            'preventive': 'تعمیرات پیشگیرانه',
+            'inspection': 'بازرسی',
+            'calibration': 'کالیبراسیون',
+            'installation': 'نصب',
+            'modification': 'اصلاح و تغییر',
+            'cleaning': 'نظافت و سرویس',
+            'consultation': 'مشاوره فنی',
+            'other': 'سایر'
+        };
+        
+        const summaryHTML = `
+            <div class="summary-item">
+                <div class="summary-label">درخواست‌کننده</div>
+                <div class="summary-value">${document.getElementById('requesterName').value}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">دپارتمان</div>
+                <div class="summary-value">${document.getElementById('department').options[document.getElementById('department').selectedIndex]?.text}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">تجهیز</div>
+                <div class="summary-value">${selectedEquipment ? selectedEquipment.name : document.getElementById('manualEquipmentName')?.value || 'تعریف نشده'}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">محل</div>
+                <div class="summary-value">${document.getElementById('section').value || 'تعریف نشده'}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">نوع درخواست</div>
+                <div class="summary-value">${requestTypeLabels[data.requestType] || 'تعریف نشده'}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">اولویت</div>
+                <div class="summary-value">
+                    <span class="priority-badge priority-${data.priority || 'medium'}">
+                        ${priorityLabels[data.priority] || 'متوسط'}
+                    </span>
+                </div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">فایل‌های پیوست</div>
+                <div class="summary-value">${uploadedFiles.length} فایل</div>
+            </div>
+        `;
+        
+        summaryContainer.innerHTML = summaryHTML;
+    }
+
+    // === نمایش نقشه آپلود شده در گام ۲ (اختیاری) ===
+    // === این تابع حذف شود مشکلی در برنامه به وجود نمی آورد ===
+// تابع نمایش اطلاعات فایل نقشه
+function renderMapFileInfo() {
+    const mapContainer = document.getElementById('mapUploadArea').parentNode;
+    
+    // حذف اطلاعات قبلی
+    const existingInfo = mapContainer.querySelector('.map-file-info');
+    if (existingInfo) existingInfo.remove();
+    
+    if (mapFile) {
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'map-file-info';
+        infoDiv.style.cssText = `
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        `;
+        
+        // ایجاد دکمه حذف با تابع حذف صحیح
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.innerHTML = '<i class="fas fa-times"></i>';
+        deleteButton.style.cssText = `
+            background: none;
+            border: none;
+            color: #f44336;
+            cursor: pointer;
+            padding: 5px;
+        `;
+        
+        // تابع حذف صحیح - هم المان را حذف می‌کند و هم متغیر را null می‌کند
+        deleteButton.onclick = function() {
+            infoDiv.remove(); // حذف المان از DOM
+            mapFile = null;   // مقداردهی مجدد متغیر
+            updateSummary();  // به‌روزرسانی خلاصه
+            
+            // پاک کردن input فایل
+            document.getElementById('mapFile').value = '';
+            
+            showToast('فایل نقشه حذف شد', 'info');
+        };
+        
+        infoDiv.innerHTML = `
+            <i class="fas fa-check-circle" style="color: #2196f3; font-size: 1.2rem;"></i>
+            <div style="flex: 1;">
+                <div style="font-weight: 600;">${mapFile.name}</div>
+                <div style="font-size: 0.85rem; color: #1976d2;">${(mapFile.size / 1024).toFixed(1)} KB</div>
+            </div>
+        `;
+        
+        infoDiv.appendChild(deleteButton);
+        mapContainer.appendChild(infoDiv);
+    }
+}
+    
+
+    // ذخیره پیش‌نویس
+    document.getElementById('saveDraft').addEventListener('click', async function() {
+        const formData = new FormData(form);
+        const data = {};
+        
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+        
+        data.selectedEquipment = selectedEquipment;
+        data.uploadedFiles = uploadedFiles.map(file => ({
+            name: file.name,
+            size: file.size,
+            type: file.type
+        }));
+        data.currentStep = currentStep;
+        data.timestamp = new Date().toISOString();
+        data.requesterName = document.getElementById('requesterName').value;
+        
+        try {
+            localStorage.setItem('workRequestDraft', JSON.stringify(data));
+            
+            const response = await fetch('../api/save-draft.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showToast('✅ پیش‌نویس در سرور و مرورگر ذخیره شد', 'success');
+                
+                if (result.data && result.data.draft_id) {
+                    localStorage.setItem('currentDraftId', result.data.draft_id);
+                }
+            } else {
+                showToast('⚠️ پیش‌نویس فقط در مرورگر ذخیره شد: ' + result.message, 'warning');
+            }
+            
+        } catch (error) {
+            console.error('خطا در ذخیره پیش‌نویس:', error);
+            showToast('⚠️ پیش‌نویس فقط در مرورگر ذخیره شد', 'warning');
+        }
+    });
+
+    // بارگذاری پیش‌نویس
+    function loadDraft() {
+        const savedDraft = localStorage.getItem('workRequestDraft');
+        if (savedDraft) {
+            const confirmLoad = confirm('یک پیش‌نویس ذخیره شده وجود دارد. آیا مایل به بارگذاری آن هستید؟');
+            if (confirmLoad) {
+                try {
+                    const draftData = JSON.parse(savedDraft);
+                    
+                    Object.keys(draftData).forEach(key => {
+                        const field = document.getElementById(key);
+                        if (field && draftData[key]) {
+                            if (field.type === 'checkbox' || field.type === 'radio') {
+                                if (field.value === draftData[key]) {
+                                    field.checked = true;
+                                }
+                            } else {
+                                field.value = draftData[key];
+                            }
+                        }
+                    });
+                    
+                    if (draftData.selectedEquipment) {
+                        selectedEquipment = draftData.selectedEquipment;
+                    }
+                    
+                    if (draftData.currentStep) {
+                        showStep(draftData.currentStep);
+                    }
+                    
+                    showToast('پیش‌نویس با موفقیت بارگذاری شد', 'info');
+                } catch (error) {
+                    console.error('خطا در بارگذاری پیش‌نویس:', error);
+                    showToast('خطا در بارگذاری پیش‌نویس', 'error');
+                }
+            }
+        }
+    }
+    
+    // بارگذاری خودکار پیش‌نویس
+    setTimeout(loadDraft, 1000);
+
+    // راه‌اندازی Flatpickr برای تاریخ
+    flatpickr('.date-picker', {
+        locale: 'fa',
+        altInput: true,
+        altFormat: 'Y/m/d',
+        dateFormat: 'Y/m/d',
+        disableMobile: true
+    });
+
+    // تولید شماره درخواست
+    const requestNumber = document.getElementById('requestNumber');
+    const year = new Date().getFullYear();
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const day = new Date().getDate().toString().padStart(2, '0');
+    const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    requestNumber.textContent = `WR-${year}${month}${day}-${randomNum}`;
+
+    // تابع برای پر کردن فیلدهای مخفی
+    function updateHiddenFields() {
+        console.log('در حال به‌روزرسانی فیلدهای مخفی...');
+        
+        const equipmentNameField = document.getElementById('equipmentNameField');
+        const equipmentIdField = document.getElementById('equipmentIdField');
+        const requestNumberField = document.getElementById('requestNumberField');
+        const requesterNameField = document.getElementById('requesterNameField');
+        
+        if (equipmentNameField) {
+            equipmentNameField.value = selectedEquipment ? selectedEquipment.name : 
+                document.getElementById('manualEquipmentName')?.value || '';
+            console.log('equipmentNameField:', equipmentNameField.value);
+        }
+        
+        if (equipmentIdField) {
+            equipmentIdField.value = selectedEquipment ? selectedEquipment.id : '';
+            console.log('equipmentIdField:', equipmentIdField.value);
+        }
+        
+        if (requestNumberField) {
+            requestNumberField.value = document.getElementById('requestNumber')?.textContent || '';
+            console.log('requestNumberField:', requestNumberField.value);
+        }
+        if (requesterNameField) {
+            requesterNameField.value = document.getElementById('requesterName')?.value || 'علیرضا محمدی';
+            console.log('requesterNameField:', requesterNameField.value);
+        }
+    }
+
+    // کپی شماره درخواست
+    document.getElementById('copyRequestNumber').addEventListener('click', function() {
+        navigator.clipboard.writeText(requestNumber.textContent).then(() => {
+            showToast('شماره درخواست کپی شد', 'success');
+        });
+    });
+
+    // مدیریت مراحل فرم
+function showStep(stepNumber) {
+    steps.forEach(step => {
+        const stepNum = parseInt(step.dataset.step);
+        step.classList.remove('active', 'completed');
+        
+        if (stepNum < stepNumber) {
+            step.classList.add('completed');
+        } else if (stepNum === stepNumber) {
+            step.classList.add('active');
+        }
+    });
+    
+    stepContents.forEach(content => {
+        content.classList.remove('active');
+        if (content.id === `step-${stepNumber}`) {
+            content.classList.add('active');
+        }
+    });
+    
+    currentStep = stepNumber;
+    
+    // مدیریت نمایش بر اساس مرحله
+    if (stepNumber === 2) {
+        // حذف پیام موفقیت (اگر وجود دارد)
+        removeMapSuccessMessage();
+        
+        // نمایش فایل نقشه اگر وجود دارد
+        if (mapFile) {
+            renderMapFileInfo();
+        }
+    }
+    
+    if (stepNumber === 4) {
+        renderAttachmentList();
+    }
+    
+    updateSummary();
+}
+
+
+
+
+
+
+
+
+    // اعتبارسنجی هر مرحله
+    function validateStep(step) {
+        let isValid = true;
+        const stepElement = document.getElementById(`step-${step}`);
+        const requiredFields = stepElement.querySelectorAll('[required]');
+        
+        requiredFields.forEach(field => {
+            field.classList.remove('error');
+            
+            if (!field.value.trim()) {
+                field.classList.add('error');
+                isValid = false;
+                showToast(`لطفا فیلد "${field.previousElementSibling?.textContent || 'الزامی'}" را پر کنید`, 'error');
+            }
+            
+            if (field.id === 'phoneNumber' && field.value) {
+                const phoneRegex = /^09[0-9]{9}$/;
+                if (!phoneRegex.test(field.value)) {
+                    field.classList.add('error');
+                    isValid = false;
+                    showToast('شماره تلفن معتبر نیست (الزامی: ۱۱ رقم و شروع با ۰۹)', 'error');
+                }
+            }
+            
+            if (field.id === 'email' && field.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(field.value)) {
+                    field.classList.add('error');
+                    isValid = false;
+                    showToast('آدرس ایمیل معتبر نیست', 'error');
+                }
+            }
+        });
+        
+        if (step === 3) {
+            const description = document.getElementById('problemDescription');
+            /* اگر نیاز به تعیین حداقل ورودی برای شرح مشکل است کد زیر فعال شود 
+                if (description.value.trim().length < 50) {
+                    description.classList.add('error');
+                    isValid = false;
+                    showToast('شرح مشکل باید حداقل ۵۰ کاراکتر باشد', 'error');
+                }
+            */
+            
+            const prioritySelected = document.querySelector('input[name="priority"]:checked');
+            if (!prioritySelected) {
+                isValid = false;
+                showToast('لطفا سطح اولویت را انتخاب کنید', 'error');
+            }
+        }
+        
+        return isValid;
+    }
+
+    // ==================== بخش اصلی ارسال فرم ====================
+
+// تنها یک Event Listener برای ارسال فرم
+form.addEventListener('submit', async function(e) {
+    e.preventDefault(); // جلوگیری از ارسال پیش‌فرض
+    
+    console.log('🚀 فرم در حال ارسال...');
+    
+    // اعتبارسنجی نهایی
+    if (!validateStep(currentStep)) {
+        showToast('❌ لطفا خطاهای فرم را برطرف کنید', 'error');
+        return;
+    }
+    
+    // اعتبارسنجی تأییدیه‌ها
+    if (!document.getElementById('confirmAccuracy')?.checked || 
+        !document.getElementById('confirmSafety')?.checked) {
+        showToast('❌ لطفا تأییدیه‌های لازم را علامت بزنید', 'error');
+        return;
+    }
+    
+    // بروزرسانی فیلدهای مخفی
+    updateHiddenFields();
+    
+    // ================ بخش اصلاح شده: ایجاد FormData با فایل‌ها ================
+    
+    // ایجاد FormData جدید
+    const formData = new FormData();
+    
+    // 1. اضافه کردن تمام فیلدهای فرم
+    const formElements = form.elements;
+    for (let i = 0; i < formElements.length; i++) {
+        const element = formElements[i];
+        if (element.name && element.type !== 'file' && element.type !== 'submit') {
+            formData.append(element.name, element.value);
+        }
+    }
+    
+    // 2. اضافه کردن داده‌های اضافی
+    formData.append('equipmentName', selectedEquipment ? selectedEquipment.name : 
+        document.getElementById('manualEquipmentName')?.value || '');
+    formData.append('equipmentId', selectedEquipment ? selectedEquipment.id : '');
+    formData.append('requestNumber', document.getElementById('requestNumber').textContent);
+    formData.append('requesterName', document.getElementById('requesterName').value);
+    
+    // 3. اضافه کردن فایل‌های پیوست (مهمترین بخش)
+    if (uploadedFiles && uploadedFiles.length > 0) {
+        console.log(`📎 افزودن ${uploadedFiles.length} فایل به FormData`);
+        for (let i = 0; i < uploadedFiles.length; i++) {
+            const file = uploadedFiles[i];
+            // استفاده از attachments[] برای ارسال چند فایل
+            formData.append('attachments[]', file);
+            console.log(`   - فایل ${i+1}: ${file.name} (${file.type}) - ${file.size} bytes`);
+        }
+    } else {
+        console.log('📎 هیچ فایلی برای آپلود وجود ندارد');
+    }
+    
+    // 4. اضافه کردن فایل نقشه (اگر وجود دارد)
+    if (mapFile) {
+        formData.append('map_file', mapFile);
+        console.log(`🗺️ فایل نقشه اضافه شد: ${mapFile.name} (${mapFile.type}) - ${mapFile.size} bytes`);
+    }
+    
+    // نمایش داده‌های ارسالی در کنسول
+    console.log('📤 داده‌های ارسالی:');
+    for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+            console.log(`${key}: File - ${value.name} (${value.size} bytes)`);
+        } else {
+            console.log(`${key}: ${value}`);
+        }
+    }
+    
+    // ================ پایان بخش اصلاح شده ================
+    
+    // ارسال به سرور
+    try {
+        const submitButton = document.getElementById('submitForm');
+        const originalText = submitButton.innerHTML;
+        submitButton.innerHTML = '<span class="loading-spinner"></span> در حال ارسال...';
+        submitButton.disabled = true;
+        
+        const response = await fetch('../api/save-work-request.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        console.log('📥 دریافت پاسخ از سرور. وضعیت:', response.status);
+        
+        // ابتدا پاسخ را به متن تبدیل کنید
+        const responseText = await response.text();
+        console.log('پاسخ خام:', responseText.substring(0, 500));
+        
+        // سپس سعی کنید به JSON تبدیل کنید
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('خطا در تبدیل JSON:', parseError);
+            throw new Error(`پاسخ سرور معتبر نیست. لطفاً سرور را بررسی کنید.`);
+        }
+        
+        console.log('📥 پاسخ JSON:', result);
+        
+        if (result.success) {
+            showToast('✅ درخواست کار با موفقیت ثبت شد. شماره دستورکار: ' + result.data.work_order_number, 'success');
+            
+            // پاک کردن پیش‌نویس
+            localStorage.removeItem('workRequestDraft');
+            
+            // هدایت به صفحه تأیید بعد از 3 ثانیه
+            setTimeout(() => {
+                window.location.href = `../management/work-orders.html?wo=${result.data.work_order_number}`;
+            }, 3000);
+            
+        } else {
+            console.error('❌ خطای سرور:', result);
+            let errorMessage = result.message || 'خطا در ارسال فرم';
+            
+            if (result.error_details) {
+                console.error('جزئیات خطا:', result.error_details);
+            }
+            
+            showToast(`❌ ${errorMessage}`, 'error');
+        }
+        
+    } catch (error) {
+        console.error('❌ خطا در ارسال فرم:', error);
+        showToast(`❌ خطا: ${error.message}`, 'error');
+    } finally {
+        const submitButton = document.getElementById('submitForm');
+        if (submitButton) {
+            submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> ارسال درخواست';
+            submitButton.disabled = false;
+        }
+    }
+});
+
+    // ==================== پایان بخش ارسال فرم ====================
+
+    // به‌روزرسانی خودکار خلاصه
+    form.addEventListener('input', updateSummary);
+    form.addEventListener('change', updateSummary);
+
+    // مدیریت حافظه مرورگر
+    window.addEventListener('beforeunload', function(e) {
+        const formData = new FormData(form);
+        let hasData = false;
+        
+        formData.forEach((value, key) => {
+            if (value && value.toString().trim() !== '') {
+                hasData = true;
+            }
+        });
+        
+        if (hasData && uploadedFiles.length > 0) {
+            e.preventDefault();
+            e.returnValue = 'اطلاعات فرم ذخیره نشده است. آیا مطمئنید که می‌خواهید صفحه را ترک کنید؟';
+            return e.returnValue;
+        }
+    });
+});
+
+// بارگیری اطلاعات کاربر از دیتابیس
+async function loadUserProfile() {
+    console.log('📡 در حال بارگیری اطلاعات کاربر از دیتابیس...');
+    
+    try {
+        // دریافت userId از localStorage
+        let userId = 'guest';
+        try {
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                userId = user.id || user.user_id || user.userId || 'guest';
+                console.log('🔑 userId از localStorage:', userId);
+            }
+        } catch (e) {
+            console.warn('⚠️ خطا در خواندن localStorage:', e);
+        }
+        
+        // اضافه کردن timestamp برای جلوگیری از کش
+        const url = `../api/get-user-profile.php?user_id=${encodeURIComponent(userId)}&t=${Date.now()}`;
+        console.log('📡 درخواست به:', url);
+        
+        const response = await fetch(url);
+        console.log('📥 وضعیت پاسخ:', response.status, response.statusText);
+        
+        const responseText = await response.text();
+        console.log('📄 پاسخ خام:', responseText.substring(0, 200));
+        
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (e) {
+            console.error('❌ خطا در parse JSON:', e);
+            throw new Error('پاسخ سرور معتبر نیست');
+        }
+        
+        console.log('📦 پاسخ Parsed:', result);
+        
+        if (result.success && result.data) {
+            const user = result.data;
+            console.log('✅ اطلاعات دریافتی از سرور:', user);
+            console.log('🔍 فیلدهای موجود:', Object.keys(user));
+            
+            // پر کردن فیلدهای فرم
+            const requesterNameField = document.getElementById('requesterName');
+            const phoneNumberField = document.getElementById('phoneNumber');
+            const emailField = document.getElementById('email');
+            const departmentField = document.getElementById('department');
+            
+            if (requesterNameField) {
+                requesterNameField.value = user.fullname || user.username || 'کاربر';
+                console.log('👤 نام تنظیم شد:', requesterNameField.value);
+            }
+            
+            if (phoneNumberField) {
+                // پشتیبانی از هر دو نام فیلد
+                const phoneValue = user.phone || user.phoneNumber || user.mobile || '09123456789';
+                phoneNumberField.value = phoneValue;
+                console.log('📞 تلفن تنظیم شد:', phoneValue, 'از فیلد:', 
+                    user.phone ? 'phone' : 
+                    user.phoneNumber ? 'phoneNumber' : 
+                    user.mobile ? 'mobile' : 'پیش‌فرض');
+            }
+            
+            if (emailField) {
+                emailField.value = user.email || '';
+                console.log('📧 ایمیل تنظیم شد:', emailField.value);
+            }
+            
+            if (departmentField && user.department) {
+                const options = departmentField.options;
+                let found = false;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].value === user.department) {
+                        departmentField.selectedIndex = i;
+                        found = true;
+                        console.log('🏢 دپارتمان تنظیم شد:', user.department);
+                        break;
+                    }
+                }
+
+                // اگر با value پیدا نشد، بر اساس متن جستجو کن
+                if (!found) {
+                    const deptMap = {
+                        'کنترل کیفیت': 'quality',
+                        'کنترل کیفی': 'quality',
+                        'تولید': 'production',
+                        'تعمیرات': 'maintenance',
+                        'تعمیرات و نگهداری': 'maintenance',
+                        'فنی': 'maintenance',
+                        'تاسیسات': 'facilities',
+                        'بسته‌بندی': 'packaging',
+                        'انبار': 'warehouse',
+                        'تحقیق و توسعه': 'rnd',
+                        'اداری': 'office',
+                        'آی تی': 'It',
+                        'انتظامات':'security',
+                        'ایمنی':'safety',
+                        'فناوری اطلاعات': 'office'
+
+                    };
+                    
+                    // اگر مقدار دریافتی متن فارسی است، value معادل را پیدا کن
+                    const mappedValue = deptMap[user.department];
+                    if (mappedValue) {
+                        for (let i = 0; i < options.length; i++) {
+                            if (options[i].value === mappedValue) {
+                                departmentField.selectedIndex = i;
+                                found = true;
+                                console.log('🏢 دپارتمان تنظیم شد با نگاشت:', user.department, '->', mappedValue);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!found) {
+                    console.warn('⚠️ دپارتمان یافت نشد:', user.department);
+                }
+            }
+            
+            // ذخیره در localStorage
+            localStorage.setItem('user_profile', JSON.stringify(user));
+            console.log('💾 اطلاعات در localStorage ذخیره شد');
+            
+        } else {
+            console.warn('⚠️ اطلاعات کاربر از سرور دریافت نشد:', result.message || 'خطای نامشخص');
+            console.log('🔄 استفاده از localStorage...');
+            loadUserProfileFromLocal();
+        }
+        
+    } catch (error) {
+        console.error('❌ خطا در بارگیری اطلاعات کاربر:', error);
+        loadUserProfileFromLocal();
+    }
+}
+
+// فراخوانی تابع با تاخیر برای اطمینان از بارگیری کامل DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(loadUserProfile, 500);
+    });
+} else {
+    setTimeout(loadUserProfile, 500);
+}
+
+
+
+
+
+
+// تابع fallback برای خواندن از localStorage
+function loadUserProfileFromLocal() {
+    try {
+        const userData = localStorage.getItem('user');
+        
+        if (userData) {
+            const user = JSON.parse(userData);
+            console.log('👤 اطلاعات کاربر از localStorage:', user);
+            
+            const requesterNameField = document.getElementById('requesterName');
+            const phoneNumberField = document.getElementById('phoneNumber');
+            const emailField = document.getElementById('email');
+            const departmentField = document.getElementById('department');
+            
+            if (requesterNameField && user.fullname) {
+                requesterNameField.value = user.fullname;
+            }
+            
+            // اصلاح این بخش - هر دو حالت را پشتیبانی کن
+            if (phoneNumberField) {
+                if (user.phone) {
+                    phoneNumberField.value = user.phone;
+                } else if (user.phoneNumber) {
+                    phoneNumberField.value = user.phoneNumber;
+                }
+            }
+            
+            if (emailField && user.email) {
+                emailField.value = user.email;
+            }
+            
+            if (departmentField && user.department) {
+                const options = departmentField.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].value === user.department) {
+                        departmentField.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        } else {
+            console.warn('⚠️ اطلاعات کاربر یافت نشد، استفاده از مقادیر پیش‌فرض');
+            setDefaultUserProfile();
+        }
+    } catch (error) {
+        console.error('❌ خطا در بارگیری اطلاعات کاربر:', error);
+        setDefaultUserProfile();
+    }
+}
+
+// تابع برای تنظیم مقادیر پیش‌فرض
+function setDefaultUserProfile() {
+    const requesterNameField = document.getElementById('requesterName');
+    const phoneNumberField = document.getElementById('phoneNumber');
+    
+    if (requesterNameField) {
+        requesterNameField.value = 'کاربر';
+    }
+    
+    if (phoneNumberField) {
+        phoneNumberField.value = '09123456789'; // شماره پیش‌فرض
+    }
+}
+
+
+// بارگیری اطلاعات کاربر
+loadUserProfile();
+
+// همچنین برای اطمینان، بعد از بارگیری هدر هم صدا بزن
+setTimeout(loadUserProfile, 1000);
+
+// تابع نمایش پیام
+function showToast(message, type = 'info') {
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        `;
+        document.body.appendChild(toastContainer);
+    }
+    
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        background-color: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        font-family: 'Vazirmatn', sans-serif;
+        font-weight: 500;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            toast.remove();
+            if (toastContainer.children.length === 0) {
+                toastContainer.remove();
+            }
+        }, 300);
+    }, 3000);
+}
+        
+    </script>
+
+
+
+
+
+
+
+</body>
+</html>
